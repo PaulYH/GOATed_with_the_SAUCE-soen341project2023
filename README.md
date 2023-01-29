@@ -8,12 +8,12 @@ In this porject, we will developp a career platform web application. On this pla
 
 ## Team Members and Roles:
 
-**Alexis Bernier 40208693 (Alexis07Bernier)**     --> Project Manager (doc) and Front end <br>
-**Tatiana Blogu 40172342 (tati-b)**               --> UI/UX and Product Testing, User stories<br>
-**Louis Huynh 40212574 (Wandering-Fool)**         --> Back end and databases<br>
-**Paul Humennyj 40209588 (PaulYH)**               --> Front end and Submission rerview, User stories<br>
-**Nicolas Beaudin Pearson 40096610 (Patacorn)**   --> Product Testing and back end, Minutes meeting<br>
-**Mina Wahba**      --> Product Testing, back end<br>
+**Alexis Bernier 40208693 (Alexis07Bernier)**     --> _Project Manager (doc) and Front end_ <br>
+**Tatiana Blogu 40172342 (tati-b)**               --> _UI/UX and Product Testing, User stories_<br>
+**Louis Huynh 40212574 (Wandering-Fool)**         --> _Back end and databases_<br>
+**Paul Humennyj 40209588 (PaulYH)**               --> _Front end and Submission rerview, User stories_<br>
+**Nicolas Beaudin Pearson 40096610 (Patacorn)**   --> _Product Testing and back end, Minutes meeting_<br>
+**Mina Wahba**      --> _Product Testing, back end_<br>
 
 
 ## Project Approach and Technology:
