@@ -1,1 +1,26 @@
+Below is the fist four user stories:
 
+US - 1
+As a recruiter, I would like to have a simplified version (a summary) of the website with all job applications so that it will be easier and faster to access them.
+
+As a recruiter, I would like write a job description to a job offer on one page. In order to see the detailed description, the user should be able to click on the job posting and see the details displayed on screen.
+
+US - 2
+
+As a user, I would like to create an account so that I can scroll through available job openings or post what types of jobs I am looking for.
+
+The user will be able to create and account so that all his personal information will be saved on the website. This feature will facilitate the job search or application process.
+
+US - 3
+
+As an applicant, I would prefer to be able to make an account for the site and upload my resume to the site so that my profile would be registered to the site and the recruiter would receive my application.
+
+Priority: HIGH
+This is due to the fact that the user should be able to have an account and have his information saved in the system so that he can interact with the site and later upload his resume so that the recruiter receives it in the first place.
+
+Story Point: 5
+This is because this is related to all parts of the project from the front end, back end, and database, so the amount of work relies on all parts of the project to be done.
+
+US - 4
+
+As an employer, I need to be able to post job offers so that candidates can apply to them.
