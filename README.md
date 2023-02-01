@@ -24,7 +24,7 @@ In this project, we will develop a career platform web application. This platfor
 ## Project Approach and Technology:
 
 - For this project we will use Blazor for the front end which will allow the team to work with C# for both front and back end.
-- Use Entity Framwork to tie everything together.
+- Use Entity Framework Core to connect to Microsoft SQL Server database.
 - Working through GitHub, we will push and pull our work from and to our local devices to the git repository (team members will use any IDE they feel comfortable with).
 - Each team member has a specific role assigned to them. This ensures that we complete every task of the project.
 
