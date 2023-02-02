@@ -1,0 +1,10 @@
+Issues:
+
+- will look over the task breakdown file to ensure we are not missing anything
+
+
+Plans:
+
+- Start coding our user stories, setting up the underlying application
+- Start coding the back end side of the users. In other words, create the classes for the admin,
+    students, and the employers
