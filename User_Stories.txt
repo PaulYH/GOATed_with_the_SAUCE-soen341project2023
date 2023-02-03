@@ -13,7 +13,70 @@ The user will be able to create and account so that all his personal information
 
 US - 3
 
-As an applicant, I would prefer to be able to make an account for the site and upload my resume to the site so that my profile would be registered to the site and the recruiter would receive my application.
+As a candidate, I would prefer to be able to make an account for the site and upload my resume to the site so that my profile would be registered to the site and i can later send my resume to the employer..
+ 
+**Priority**: HIGH
+This is due to the fact that the user should be able to have an account and have his information saved in the system so that he can interact with the site and later upload his resume to any applications that an employer would like to receive.
+
+**Story Point**: 5
+This is because this is related to all parts of the project from the front end, back end, and database, so the amount of work relies on all parts of the project to be done.
+
+**Acceptance Tests**
+-
+
+**Account Creation**
+
+-    **Passed**
+
+    1. I click on the "Sign Up" button on the main page.
+    2. I am directed to the account creation screen.
+    3. I enter my new account credentials.
+    4. I click on "Confirm" button.
+    5. My account has been created.
+    
+
+-    **Failure**
+    
+    Account already exist:
+
+    1. I click on the "Sign Up" button on the main page.
+    2. I am directed to the account creation screen.
+    3. I enter my new account credentials.
+    4. I click on "Confirm" button.
+    5. I am redirected to the same account creation page because my Username already exists on the database.
+    6. I enter my new account with different credentials.
+    7. My account has been created.
+   
+   
+**Resume**
+
+-    **Passed**
+
+    1. On my personal profile page, I click on the upload box under my resume.
+    2. The site prompts me to select a file to upload.
+    3. I upload the PDF file of my Resume.
+    4. My resume is uploaded to my profile.
+    
+
+-  **Failure**
+
+    Resume already exists:
+
+    1. On my personal profile page, the box to upload my resume doesn't exist, as a previous resume is already there.
+    2. I click on the "Delete" button to delete the previous resume.
+    3. I now click on the upload box under the resume
+    4. The site prompts me to select a file to upload.
+    5. I upload the PDF file of my Resume.
+    6. My resume is uploaded to my profile.
+    
+    PDF File size too big:
+    
+    1. On my personal profile page, I click on the upload box under my resume.
+    2. The site prompts me to select a file to upload.
+    3. I upload the PDF file of my Resume.
+    4. The upload fails due to the file size being too big
+    5. I upload the PDF file of my Resume which has a smaller size.
+    6. My resume is uploaded to my profile.
 
 Priority: HIGH
 This is due to the fact that the user should be able to have an account and have his information saved in the system so that he can interact with the site and later upload his resume so that the recruiter receives it in the first place.
