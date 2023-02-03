@@ -1,17 +1,55 @@
 Below is the fist four user stories:
 
-US - 1
-As a recruiter, I would like to have a simplified version (a summary) of the website with all job applications so that it will be easier and faster to access them.
+US - 01 Admin Account
 
-As a recruiter, I would like write a job description to a job offer on one page. In order to see the detailed description, the user should be able to click on the job posting and see the details displayed on screen.
+As an admin, I would like to manage all user profiles and postings on the website in order to help users with any technical problem. Therefore, there should be created an account for admin who will have an access to every feature on the website.
 
-US - 2
+**Priority:** MEDIUM
+This is not an essential feature for now. However, it will be useful to have it as soon as possible.
 
-As a user, I would like to create an account so that I can scroll through available job openings or post what types of jobs I am looking for.
+**Story Points:** 5
+This task might take more time and effort because the front end, back end, and database are involved. 
 
-The user will be able to create and account so that all his personal information will be saved on the website. This feature will facilitate the job search or application process.
+**Acceptance Tests**
 
-US - 3
+**Login Into Admin Account** 
+1. I click on the "Log In" button on the main page.
+2. I am directed to the account login page.
+3. I enter my admin credentials.
+4. I click on "Enter" button.
+5. I am logged in my account.
+
+**Fixing User's Problem**
+1. I click on button to open the database with all accounts.
+2. I am directed to the account' database.
+3. I change one or many properties in the user's account to fix the problem. 
+4. I click on "Save" button.
+5. The problem is fixed. 
+
+
+US - 02 Summary of Job Applications
+
+As a recruiter/employer, I would like to have a simplified version (a summary) of the website with all job applications so that it will be easier and faster to access them. I would like see a short description of every job application in one page. In order to see a detailed description, the recruiter can click on the application and more details will be displayed. 
+
+**Priority:** LOW
+The reason why the priority is low is because it is not a core feature. It is preferable to have it for the more convenient use of the website.  
+
+**Story Points:** 4
+All parts of the project are involved. 
+
+**Acceptance Tests**
+
+**Checking the Job Application**
+1. I log in into my employer account. 
+2. I click on job applications button.
+3. I am directed to the application page with the list of applications.
+4. I see the list of applications along with names and date of application.
+5. I click on interested application and I see the short description of it.
+6. I want to see the full information about the person who applied ,therefore I click on it in order to get more details.
+7. I am directed to the application page and I see more details about the person who applied, his/her resume and other relevant information.  
+
+
+US - 03 User Profile and Resume
 
 As a candidate, I would prefer to be able to make an account for the site and upload my resume to the site so that my profile would be registered to the site and i can later send my resume to the employer..
  
@@ -84,6 +122,23 @@ This is due to the fact that the user should be able to have an account and have
 Story Point: 5
 This is because this is related to all parts of the project from the front end, back end, and database, so the amount of work relies on all parts of the project to be done.
 
-US - 4
 
-As an employer, I need to be able to post job offers so that candidates can apply to them.
+US - 04 Post Job Offers
+
+As an employer, I need to be able to post job offers so that candidates can apply to them. The main idea and goal of this website is to help users to find a job. Therefore, it is essential to the employer to be able to post job offers.
+
+**Priority:** HIGH
+It is a core feature of the website . We should implement it as soon as possible. That is the reason why the priority is high. 
+
+**Story Points:** 5
+The front end, back end, and database are engaged in completing this task.
+
+**Acceptance Tests**
+-
+**Post New Job Offer**
+1. I click on "Log in" button
+2. I enter my account credentials
+3. Having logged in successfully, I click on "New Job Offer" button
+4. I properly fill out requested information in the job offer form
+5. I click "Submit"
+6. The job offer is now posted on the job board
