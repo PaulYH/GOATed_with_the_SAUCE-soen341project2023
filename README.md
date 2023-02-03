@@ -23,8 +23,13 @@ In this project, we will develop a career platform web application. On this plat
 
 ## Project Approach and Technology:
 
-- For this project we will use Blazor for the front end which will allow the team to work with C# for both front end and back end.
-- Use entity framwork to tie eveything together.
+- **C#**: primary language (front-end and back-end)
+- **Blazor**: allows the writing of C# on the front-end
+- **Blazorise**: library for UI components
+- **Entity Framework Core**: allows for easy connection between web app and database
+- **SQL Server**: relational database
+- **ASP.NET**: the above technologies are built on this framework
+
 - Working through GitHub, we will push and pull our work from our local device to the git repository (team members will use any IDE they feel comfortable with).
 - Each team member has a specific role assigned to them. This ensures that we complete every task of the project.
 
