@@ -21,5 +21,10 @@ namespace DatabaseAccess.Entities
         public string StudentNum { get; set; } = String.Empty;
         public string University { get; set; } = String.Empty;
         public string Program { get; set; } = String.Empty;
+
+        // Database Relationships
+        public ICollection<JobPost>? JobPosts { get; set; }
+        public ICollection<JobApplication>? JobApplications { get; set; }
+
     }
 }
