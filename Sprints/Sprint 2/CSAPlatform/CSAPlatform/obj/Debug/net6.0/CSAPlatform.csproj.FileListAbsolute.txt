@@ -74,3 +74,4 @@ C:\Users\Paul\Desktop\Projects\soen341_project\Sprints\Sprint 2\CSAPlatform\CSAP
 C:\Users\Paul\Desktop\Projects\soen341_project\Sprints\Sprint 2\CSAPlatform\CSAPlatform\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
 C:\Users\Paul\Desktop\Projects\soen341_project\Sprints\Sprint 2\CSAPlatform\CSAPlatform\bin\Debug\net6.0\DatabaseAccess.dll
 C:\Users\Paul\Desktop\Projects\soen341_project\Sprints\Sprint 2\CSAPlatform\CSAPlatform\bin\Debug\net6.0\DatabaseAccess.pdb
+C:\Users\Paul\Desktop\Projects\soen341_project\Sprints\Sprint 2\CSAPlatform\CSAPlatform\obj\Debug\net6.0\CSAPlatform.MvcApplicationPartsAssemblyInfo.cs

@@ -4,17 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DatabaseAccess.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Admin> Admins { get; set; } = null!;
-        public DbSet<Employer> Employers { get; set; } = null!;
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
+
         public DbSet<JobApplication> JobApplications { get; set; } = null!;
         public DbSet<JobPost> JobPosts { get; set; } = null!;
-        public DbSet<Student> Students { get; set; } = null!;
+
     }
 }
