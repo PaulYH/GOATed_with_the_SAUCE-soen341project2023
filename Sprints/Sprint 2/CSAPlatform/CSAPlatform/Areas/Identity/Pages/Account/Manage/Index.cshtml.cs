@@ -59,6 +59,20 @@ namespace CSAPlatform.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+            [Display(Name = "Student number")]
+            public string StudentNum { get; set; }
+            [Display(Name = "University")]
+            public string University { get; set; }
+            [Display(Name = "Program")]
+            public string Program { get; set; }
+            [Display(Name = "Company name")]
+            public string CompanyName { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
