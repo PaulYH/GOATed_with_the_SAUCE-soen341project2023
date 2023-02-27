@@ -1,0 +1,29 @@
+﻿@page "/upload"
+@using System.IO
+<h3>PDFUpload</h3>
+<Field>
+     <FilePicker Multiple Upload="OnFileUpload" ShowMode="FilePickerShowMode.List" />
+</Field>
+<a href="/Identity/Account/Manage">Back</a>
+
+
+@code {
+    async Task OnFileUpload(FileUploadEventArgs e)
+    {
+        try
+        {
+            using (MemoryStream result = new MemoryStream())
+            {
+                await e.File.OpenReadStream(long.MaxValue).CopyToAsync(result);
+            }
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+        }
+        finally
+        {
+            this.StateHasChanged();
+        }
+    }
+}

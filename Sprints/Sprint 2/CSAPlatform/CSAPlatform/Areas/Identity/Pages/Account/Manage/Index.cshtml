@@ -55,8 +55,10 @@
                 <input asp-for="Input.CompanyName" class="form-control" />
                 <label asp-for="Input.CompanyName" class="form-control"></label>
             </div>
+            
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
+        <a href="/upload" hidden="@(currentUser.Role == RoleType.Employer)">Upload Resume Here</a>
     </div>
 </div>
 
