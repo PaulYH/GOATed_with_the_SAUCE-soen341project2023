@@ -1,6 +1,12 @@
 ﻿@page "/new"
+@using DatabaseAccess.Data;
+@using DatabaseAccess.Entities;
 @using DatabaseAccess.Enums;
+@using Microsoft.AspNetCore.Identity;
 @inject NavigationManager NavigationManager
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
+@inject JobPostService JobPostService
 
 <PageTitle>New</PageTitle>
 
@@ -74,11 +80,16 @@
     </Field>
 
     <Field>
-        <Button Color="Color.Success">Save</Button>
+        <Button Color="Color.Success" Clicked="SaveData">Save</Button>
     </Field>
 
 
 @code {
+    // Code block for both Front-end and Back-end
+    JobPost newJobPost = new JobPost();
+    ApplicationUser currentUser;
+
+
     DateTime currentTime { get; set; } = DateTime.Now;
     DateTime expirationTime { get; set; } = DateTime.Now;
     PostStatusType status { get; set; } = PostStatusType.Open;
@@ -87,4 +98,29 @@
     string jobTitleText { get; set; } = string.Empty;
     decimal salaryValue { get; set; } = 0;
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetUser();
+    }
+
+    public async void GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);    
+    }
+
+    public void SaveData()
+    {
+        newJobPost.CreationDate = currentTime;
+        newJobPost.ExpirationDate = expirationTime;
+        newJobPost.Status = status;
+        newJobPost.JobType = jobType;
+        newJobPost.Location = locationText;
+        newJobPost.JobTitle = jobTitleText;
+        newJobPost.Salary = salaryValue;
+        newJobPost.User = currentUser;
+
+        Console.WriteLine(JobPostService.CreateJob(newJobPost));
+        NavigationManager.NavigateTo($"/job/{newJobPost.Id}");
+    }
 }
