@@ -24,6 +24,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+
+builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddScoped<ApplicationUserService>();
 builder.Services
     .AddBlazorise(options =>

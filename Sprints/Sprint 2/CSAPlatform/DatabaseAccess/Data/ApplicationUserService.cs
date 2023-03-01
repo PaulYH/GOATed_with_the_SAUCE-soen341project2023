@@ -27,5 +27,19 @@ namespace DatabaseAccess.Data
             _context.Users.Update(updatedUser);
             _context.SaveChanges();
         }
+
+        public ApplicationUser UploadPdf(string userId, byte[] pdf)
+        {
+            _context.Users.FirstOrDefault(x => x.Id == userId).Attachment = pdf;
+            _context.SaveChanges();
+            return _context.Users.FirstOrDefault(x => x.Id == userId);
+        }
+
+        public void DeletePdf(string userId)
+        {
+            _context.Users.FirstOrDefault(x => x.Id == userId).Attachment = null;
+            _context.SaveChanges();
+            return;
+        }
     }
 }
