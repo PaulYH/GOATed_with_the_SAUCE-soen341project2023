@@ -23,72 +23,70 @@
     <TextEdit Placeholder="Job Title" @bind-Text="jobTitleText" />
 </Field>
 
-    <Field>
-        <FieldLabel>
-            Creation Date
-        </FieldLabel>
-        <DateEdit TValue="DateTime" @bind-Date="currentTime" Disabled />
-    </Field>
+<Field>
+    <FieldLabel>
+        Creation Date
+    </FieldLabel>
+    <DateEdit TValue="DateTime" @bind-Date="currentTime" Disabled />
+</Field>
 
-    <Field>
-        <FieldLabel>
-            Expiration Date
-        </FieldLabel>
+<Field>
+    <FieldLabel>
+        Expiration Date
+    </FieldLabel>
     <DateEdit TValue="DateTime" @bind-Date="expirationTime"/>
-    </Field>
+</Field>
 
-    <Field>
-        <FieldLabel>
-            Job Status
-        </FieldLabel>
+<Field>
+    <FieldLabel>
+        Job Status
+    </FieldLabel>
     <RadioGroup TValue="PostStatusType" Name="status" @bind-CheckedValue="status">
-            <Radio Value="@(PostStatusType.Open)">Open</Radio>
-            <Radio Value="@(PostStatusType.Expired)">Expired</Radio>
-        </RadioGroup>
-    </Field>
+        <Radio Value="@(PostStatusType.Open)">Open</Radio>
+        <Radio Value="@(PostStatusType.Expired)">Expired</Radio>
+    </RadioGroup>
+</Field>
 
-    <Field>
-        <FieldLabel>
-            Job Type
-        </FieldLabel>
+<Field>
+    <FieldLabel>
+        Job Type
+    </FieldLabel>
     <RadioGroup TValue="JobType" Name="jobType" @bind-CheckedValue="jobType">
-            <Radio Value="@(JobType.Onsite)">Onsite</Radio>
-            <Radio Value="@(JobType.Remote)">Remote</Radio>
-            <Radio Value="@(JobType.Hybrid)">Hybrid</Radio>
-        </RadioGroup>
-    </Field>
+        <Radio Value="@(JobType.Onsite)">Onsite</Radio>
+        <Radio Value="@(JobType.Remote)">Remote</Radio>
+        <Radio Value="@(JobType.Hybrid)">Hybrid</Radio>
+    </RadioGroup>
+</Field>
 
-    <Field>
-        <FieldLabel>
-            Location
-        </FieldLabel>
-        <TextEdit Placeholder="Location" @bind-Text="locationText" />
-    </Field>
+<Field>
+    <FieldLabel>
+        Location
+    </FieldLabel>
+    <TextEdit Placeholder="Location" @bind-Text="locationText" />
+</Field>
 
-    <Field>
-        <FieldLabel>
-            Job Description
-        </FieldLabel>
-        <MemoEdit Rows="5" />
-    </Field>
+<Field>
+    <FieldLabel>
+        Job Description
+    </FieldLabel>
+    <MemoEdit Rows="5" @bind-Text="jobDescriptionText"/>
+</Field>
 
-    <Field>
-        <FieldLabel>
-            Salary (Hourly)
-        </FieldLabel>
+<Field>
+    <FieldLabel>
+        Salary (Hourly)
+    </FieldLabel>
     <NumericEdit TValue="decimal" @bind-Value="salaryValue" />
-    </Field>
+</Field>
 
-    <Field>
-        <Button Color="Color.Success" Clicked="SaveData">Save</Button>
-    </Field>
+<Field>
+    <Button Color="Color.Success" Clicked="SaveData">Save</Button>
+</Field>
 
 
 @code {
-    // Code block for both Front-end and Back-end
     JobPost newJobPost = new JobPost();
     ApplicationUser currentUser;
-
 
     DateTime currentTime { get; set; } = DateTime.Now;
     DateTime expirationTime { get; set; } = DateTime.Now;
@@ -96,8 +94,8 @@
     JobType jobType { get; set; } = JobType.Onsite;
     string locationText { get; set; } = string.Empty;
     string jobTitleText { get; set; } = string.Empty;
+    string jobDescriptionText { get; set; } = string.Empty;
     decimal salaryValue { get; set; } = 0;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -117,6 +115,7 @@
         newJobPost.JobType = jobType;
         newJobPost.Location = locationText;
         newJobPost.JobTitle = jobTitleText;
+        newJobPost.Description = jobDescriptionText;
         newJobPost.Salary = salaryValue;
         newJobPost.User = currentUser;
 

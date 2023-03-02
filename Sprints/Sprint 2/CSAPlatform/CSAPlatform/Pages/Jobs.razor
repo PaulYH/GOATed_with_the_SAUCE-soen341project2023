@@ -10,10 +10,13 @@
 @inject JobPostService JobPostService
 
 <PageTitle>Jobs</PageTitle>
+@if(isLoggedIn)
+{
 <h2>Job Postings</h2>
 <DataGrid TItem="JobPost"
           Data="@jobList"
           @bind-SelectedRow="@selectedJob"
+          RowSelectable=@((e) => { NavigationManager.NavigateTo($"/job/{e.Item.Id}"); return true; })
           Editable
           Responsive
           ShowPager
@@ -26,40 +29,50 @@
         <DataGridColumn Field="@nameof(JobPost.ExpirationDate)" Caption="Expiration Date" />
         <DataGridColumn Field="@nameof(JobPost.Location)" Caption="Location" />
         <DataGridColumn Field="@nameof(JobPost.Status)" Caption="Status" />
-        <!--<DataGridColumn Field="@nameof(JobPost.User.CompanyName)" Caption="Company" /> -->
         <DataGridColumn Field="@nameof(JobPost.JobType)" Caption="Type" />
     </DataGridColumns>
 
     <ButtonRowTemplate>
         <Button Color="Color.Success" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
-        <Button Color="Color.Primary" Disabled="true" Clicked="context.EditCommand.Clicked">Edit</Button>
-        <Button Color="Color.Danger" Disabled="(selectedJob is null)" hidden="true" Clicked="context.DeleteCommand.Clicked">Delete</Button>
     </ButtonRowTemplate>
 </DataGrid>
+
+}
+else
+{
+    <p>Please log in to access this page</p>
+}
 
 @code {
     public ApplicationUser currentUser;
     private List<JobPost> jobList = new List<JobPost> { };
     private JobPost selectedJob = new JobPost();
     private DataGridEditMode editMode = DataGridEditMode.Form;
+    public bool isLoggedIn = false;
+
     protected override async Task OnInitializedAsync()
     {
-        await GetUser();
+        await GetCurrentUser();
 
-        if (currentUser.Role == RoleType.Employer)
+        if (currentUser != null)
         {
-            jobList = JobPostService.GetUserJobPosts(currentUser.Id);
-        }
-        else
-        {
-            jobList = JobPostService.GetAllJobPosts();
+            isLoggedIn = true;
+            if (currentUser.Role == RoleType.Employer)
+            {
+                jobList = await JobPostService.GetUserJobPosts(currentUser.Id);
+            }
+            else
+            {
+                jobList = await JobPostService.GetAllJobPosts();
+            }
         }
 
         await base.OnInitializedAsync();
     }
 
-    public async Task GetUser()
+    public async Task GetCurrentUser()
     {
         currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
     }
+
 }

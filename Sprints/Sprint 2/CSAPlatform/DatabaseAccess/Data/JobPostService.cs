@@ -16,20 +16,20 @@ namespace DatabaseAccess.Data
             _context = context;
         }
 
-        public List<JobPost> GetAllJobPosts()
+        public async Task<List<JobPost>> GetAllJobPosts()
         {
             var jobList = _context.JobPosts.ToList();
             return jobList;
         }
 
-        public List<JobPost> GetUserJobPosts(string userId)
+        public async Task<List<JobPost>> GetUserJobPosts(string userId)
         {
             var jobList = _context.JobPosts.Where(x => x.User.Id == userId).ToList();
             return jobList;
 
         }
 
-        public JobPost GetJobPostById(int id)
+        public async Task<JobPost> GetJobPostById(int id)
         {
             JobPost job = _context.JobPosts.FirstOrDefault(x => x.Id == id);
             return job;
