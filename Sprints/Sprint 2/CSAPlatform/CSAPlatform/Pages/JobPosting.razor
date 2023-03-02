@@ -1,7 +1,158 @@
-﻿@page "/job"
+﻿@page "/job/{currentId}"
+@using DatabaseAccess.Data
+@using DatabaseAccess.Entities
+@using DatabaseAccess.Enums
+@using Microsoft.AspNetCore.Identity
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
+@inject JobPostService JobPostService
+@inject NavigationManager NavigationManager
 
-<PageTitle>Job Post</PageTitle>
+<PageTitle>Job Post #@currentId</PageTitle>
+
+<Field>
+    <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo("/jobs");})">Back</Button>
+</Field>
+
+@if(!isEditing)
+{
+<h2>Job Post #@currentId</h2>        
+}
+else
+{
+<h2>Edit Job Post #@currentId</h2>
+}
+
+<Field>
+    <FieldLabel>
+        Job Title
+    </FieldLabel>
+    <TextEdit Disabled="@(isStudent || !isEditing)" Placeholder="Job Title" @bind-Text="jobTitleText" />
+</Field>
+
+<Field>
+    <FieldLabel>
+        Creation Date
+    </FieldLabel>
+    <DateEdit TValue="DateTime" @bind-Date="creationTime" Disabled />
+</Field>
+
+<Field>
+    <FieldLabel>
+        Expiration Date
+    </FieldLabel>
+    <DateEdit Disabled="@(isStudent || !isEditing)" TValue="DateTime" @bind-Date="expirationTime"/>
+</Field>
+
+<Field>
+    <FieldLabel>
+        Job Status
+    </FieldLabel>
+    <RadioGroup Disabled="@(isStudent || !isEditing)" TValue="PostStatusType" Name="status" @bind-CheckedValue="status">
+        <Radio Disabled="@(isStudent || !isEditing)" Value="@(PostStatusType.Open)">Open</Radio>
+        <Radio Disabled="@(isStudent || !isEditing)" Value="@(PostStatusType.Expired)">Expired</Radio>
+    </RadioGroup>
+</Field>
+
+<Field>
+    <FieldLabel>
+        Job Type
+    </FieldLabel>
+    <RadioGroup Disabled="@(isStudent || !isEditing)" TValue="JobType" Name="jobType" @bind-CheckedValue="jobType">
+        <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Onsite)">Onsite</Radio>
+        <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Remote)">Remote</Radio>
+        <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Hybrid)">Hybrid</Radio>
+    </RadioGroup>
+</Field>
+
+<Field>
+    <FieldLabel>
+        Location
+    </FieldLabel>
+    <TextEdit Disabled="@(isStudent || !isEditing)" Placeholder="Location" @bind-Text="locationText" />
+</Field>
+
+<Field>
+    <FieldLabel>
+        Job Description
+    </FieldLabel>
+    <MemoEdit Disabled="@(isStudent || !isEditing)" @bind-Text="jobDescriptionText" Rows="5" />
+</Field>
+
+<Field>
+    <FieldLabel>
+        Salary (Hourly)
+    </FieldLabel>
+    <NumericEdit Disabled="@(isStudent || !isEditing)" TValue="decimal" @bind-Value="salaryValue" />
+</Field>
+
+<Field hidden="@(isStudent || !isEditing)">
+    <Button Color="Color.Success" Clicked="UpdateData">Save Changes</Button>
+</Field>
+
+<Field hidden="@(isStudent || isEditing)">
+    <Button Color="Color.Primary" Clicked="@(e => { isEditing = true; })">Edit Post</Button>
+</Field>
 
 @code {
+    [Parameter]
+    public string? currentId { get; set; }
 
+    public ApplicationUser currentUser;
+    public JobPost currentJobPost { get; set; }
+    public bool jobExist = false;
+    public bool isStudent = false;
+    public bool isEditing = false;
+
+    DateTime creationTime { get; set; }
+    DateTime expirationTime { get; set; }
+    PostStatusType status { get; set; }
+    JobType jobType { get; set; }
+    string locationText { get; set; } = String.Empty;
+    string jobTitleText { get; set; } = String.Empty;
+    string jobDescriptionText { get; set; } = String.Empty;
+    decimal salaryValue { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+        isStudent = (currentUser.Role == RoleType.Student);
+
+        if (currentId != null && currentId != String.Empty)
+        {
+            jobExist = true;
+            currentJobPost = await JobPostService.GetJobPostById(Int32.Parse(currentId));
+
+            creationTime = currentJobPost.CreationDate;
+            expirationTime = currentJobPost.ExpirationDate;
+            status = currentJobPost.Status;
+            jobType = currentJobPost.JobType;
+            locationText = currentJobPost.Location;
+            jobTitleText = currentJobPost.JobTitle;
+            jobDescriptionText = currentJobPost.Description;
+            salaryValue = currentJobPost.Salary;
+
+        }
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    public async Task UpdateData()
+    {
+        currentJobPost.CreationDate = creationTime;
+        currentJobPost.ExpirationDate = expirationTime;
+        currentJobPost.Status = status;
+        currentJobPost.JobType = jobType;
+        currentJobPost.Location = locationText;
+        currentJobPost.JobTitle = jobTitleText;
+        currentJobPost.Description = jobDescriptionText;
+        currentJobPost.Salary = salaryValue;
+        currentJobPost.User = currentUser;
+
+        Console.WriteLine(JobPostService.UpdateJob(currentJobPost));
+        NavigationManager.NavigateTo($"/job/{currentId}", true);
+    }
 }
