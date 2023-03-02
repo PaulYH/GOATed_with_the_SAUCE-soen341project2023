@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using DatabaseAccess.Data;
 using DatabaseAccess.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,16 @@ namespace CSAPlatform.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationUserService _userService;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ApplicationUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userService = userService;
         }
 
         /// <summary>
@@ -59,6 +63,20 @@ namespace CSAPlatform.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+            [Display(Name = "Student number")]
+            public string StudentNum { get; set; }
+            [Display(Name = "University")]
+            public string University { get; set; }
+            [Display(Name = "Program")]
+            public string Program { get; set; }
+            [Display(Name = "Company name")]
+            public string CompanyName { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -70,7 +88,14 @@ namespace CSAPlatform.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                StudentNum = user.StudentNum,
+                University = user.University,
+                Program = user.Program,
+                CompanyName = user.CompanyName
             };
         }
 
@@ -110,6 +135,16 @@ namespace CSAPlatform.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
+            user.FirstName = (Input.FirstName == null) ? String.Empty : Input.FirstName;
+            user.LastName = (Input.LastName == null) ? String.Empty : Input.LastName;
+            user.Email = (Input.Email == null) ? String.Empty : Input.Email;
+            user.StudentNum = (Input.StudentNum == null) ? String.Empty : Input.StudentNum;
+            user.University = (Input.University == null) ? String.Empty : Input.University;
+            user.Program = (Input.Program == null) ? String.Empty : Input.Program;
+            user.CompanyName = (Input.CompanyName == null) ? String.Empty : Input.CompanyName;
+
+            await _userService.UpdateUser(user);
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

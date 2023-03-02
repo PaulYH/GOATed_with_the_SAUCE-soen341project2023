@@ -1,8 +1,15 @@
 ﻿@page
+@using DatabaseAccess.Entities
+@using DatabaseAccess.Enums
+@using System.Web
+@using System.Security.Claims
+@inject UserManager<ApplicationUser> UserManager
 @model IndexModel
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
+
+    ApplicationUser currentUser = await UserManager.GetUserAsync(User);
 }
 
 <h3>@ViewData["Title"]</h3>
@@ -16,12 +23,42 @@
                 <label asp-for="Username" class="form-label"></label>
             </div>
             <div class="form-floating">
+                <input asp-for="Input.FirstName" class="form-control" />
+                <label asp-for="Input.FirstName" class="form-control"></label>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.LastName" class="form-control" />
+                <label asp-for="Input.LastName" class="form-control"></label>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Email" class="form-control" />
+                <label asp-for="Input.Email" class="form-control"></label>
+            </div>
+            <div class="form-floating">
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
+            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Employer)">
+                <input asp-for="Input.StudentNum" class="form-control" />
+                <label asp-for="Input.StudentNum" class="form-control"></label>
+            </div>
+            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Employer)">
+                <input asp-for="Input.University" class="form-control" />
+                <label asp-for="Input.University" class="form-control"></label>
+            </div>
+            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Employer)">
+                <input asp-for="Input.Program" class="form-control" />
+                <label asp-for="Input.Program" class="form-control"></label>
+            </div>
+            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Student)">
+                <input asp-for="Input.CompanyName" class="form-control" />
+                <label asp-for="Input.CompanyName" class="form-control"></label>
+            </div>
+            
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
+        <a href="/upload" hidden="@(currentUser.Role == RoleType.Employer)">Upload Resume Here</a>
     </div>
 </div>
 

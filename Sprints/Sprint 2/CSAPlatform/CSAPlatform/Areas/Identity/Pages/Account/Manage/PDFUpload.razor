@@ -1,0 +1,89 @@
+﻿@page "/upload"
+@using System.IO
+@using DatabaseAccess.Data
+@using DatabaseAccess.Entities
+@using Microsoft.AspNetCore.Identity
+@using BlazorInputFile
+@inject UserManager<ApplicationUser> UserManager
+@inject HttpContextAccessor HttpContextAccessor
+@inject ApplicationUserService UserService
+@inject IJSRuntime JsRuntime
+
+<h3>PDFUpload</h3>
+
+<a href="/Identity/Account/Manage">Back</a>
+
+@if (currentUser == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p></p>
+    <BlazorInputFile.InputFile hidden="@isUploaded" OnChange="@(async e => await OnFileUpload(e, currentUser.Id))" />
+    <p>@status</p>
+    @if (currentUser.Attachment != null)
+    {
+        <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf(currentUser.Id))">Download File</Button>
+        <Button Color="Color.Danger" Clicked="@(async e => await DeletePdf(currentUser.Id))">Delete</Button>
+    }
+}
+
+@code {
+    ApplicationUser currentUser;
+    IFileListEntry file;
+    string status = "";
+    bool isUploaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+        if (currentUser.Attachment != null)
+        {
+            isUploaded = true;
+            status = "A file is currently associated with this account";
+        }
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    public async Task OnFileUpload(IFileListEntry[] file, string userId)
+    {
+        var attachment = await FileSender(file.FirstOrDefault());
+        UserService.UploadPdf(userId, attachment);
+        currentUser = UserService.GetUserById(currentUser.Id);
+
+        status = $"Uploaded file: {file.FirstOrDefault().Name}";
+        isUploaded = true;
+    }
+
+    public async Task<byte[]> FileSender(IFileListEntry file)
+    {
+        using (var ms = new MemoryStream())
+        {
+            await file.Data.CopyToAsync(ms);
+            return ms.ToArray();
+        }
+    }
+
+    public async Task DeletePdf(string userId)
+    {
+        UserService.DeletePdf(userId);
+        currentUser = UserService.GetUserById(currentUser.Id);
+        status = "File deleted successfully";
+        isUploaded = false;
+    }
+
+    public async Task DownloadPdf(string userId)
+    {
+        var user = UserService.GetUserById(userId);
+
+        await FileUtil.SaveAs(JsRuntime, "uploaded-file.pdf", user.Attachment);
+
+        currentUser = UserService.GetUserById(currentUser.Id);
+    }
+
+}
