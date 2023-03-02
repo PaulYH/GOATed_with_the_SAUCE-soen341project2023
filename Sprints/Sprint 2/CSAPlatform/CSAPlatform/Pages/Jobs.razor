@@ -1,8 +1,13 @@
 ﻿@page "/jobs"
 @using Blazorise
+@using DatabaseAccess.Data
 @using DatabaseAccess.Entities
 @using DatabaseAccess.Enums
+@using Microsoft.AspNetCore.Identity
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
 @inject NavigationManager NavigationManager
+@inject JobPostService JobPostService
 
 <PageTitle>Jobs</PageTitle>
 <h2>Job Postings</h2>
@@ -15,9 +20,9 @@
           CommandMode="DataGridCommandMode.ButtonRow"
           EditMode="editMode">
     <DataGridColumns>
-        <DataGridColumn Field="@nameof(JobPost.Id)" Caption="#Job ID#" Sortable="false" />
-        <DataGridColumn Field="@nameof(JobPost.JobTitle)" Caption="Job Title"  />
-        <DataGridColumn Field="@nameof(JobPost.CreationDate)" Caption="Creation Date"  />
+        <DataGridColumn Field="@nameof(JobPost.Id)" Caption="#Job ID" Sortable="false" />
+        <DataGridColumn Field="@nameof(JobPost.JobTitle)" Caption="Job Title" />
+        <DataGridColumn Field="@nameof(JobPost.CreationDate)" Caption="Creation Date" />
         <DataGridColumn Field="@nameof(JobPost.ExpirationDate)" Caption="Expiration Date" />
         <DataGridColumn Field="@nameof(JobPost.Location)" Caption="Location" />
         <DataGridColumn Field="@nameof(JobPost.Status)" Caption="Status" />
@@ -28,22 +33,33 @@
     <ButtonRowTemplate>
         <Button Color="Color.Success" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
         <Button Color="Color.Primary" Disabled="true" Clicked="context.EditCommand.Clicked">Edit</Button>
-        <Button Color="Color.Danger" Disabled="(selectedJob is null)" hidden="true" Clicked="context.DeleteCommand.Clicked">Delete</Button> 
+        <Button Color="Color.Danger" Disabled="(selectedJob is null)" hidden="true" Clicked="context.DeleteCommand.Clicked">Delete</Button>
     </ButtonRowTemplate>
 </DataGrid>
 
 @code {
+    public ApplicationUser currentUser;
     private List<JobPost> jobList = new List<JobPost> { };
     private JobPost selectedJob = new JobPost();
     private DataGridEditMode editMode = DataGridEditMode.Form;
     protected override async Task OnInitializedAsync()
     {
-        //Placeholder jobs***********
-        JobPost j1 = new JobPost() { JobTitle = "title1", JobType = JobType.Remote, Location = "canada", CreationDate = DateTime.Now, ExpirationDate = DateTime.Now, Status = PostStatusType.Open };
-        JobPost j2 = new JobPost() { JobTitle = "title2", JobType = JobType.Remote, Location = "USA", CreationDate = DateTime.Now, ExpirationDate = DateTime.Now, Status = PostStatusType.Expired };
-        jobList.Add(j1);
-        jobList.Add(j2);
+        await GetUser();
+
+        if (currentUser.Role == RoleType.Employer)
+        {
+            jobList = JobPostService.GetUserJobPosts(currentUser.Id);
+        }
+        else
+        {
+            jobList = JobPostService.GetAllJobPosts();
+        }
 
         await base.OnInitializedAsync();
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
     }
 }

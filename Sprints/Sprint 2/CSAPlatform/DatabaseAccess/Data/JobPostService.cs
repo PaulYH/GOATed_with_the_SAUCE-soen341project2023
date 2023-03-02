@@ -29,7 +29,7 @@ namespace DatabaseAccess.Data
 
         }
 
-        public JobPost GetJobPostGetById(int id)
+        public JobPost GetJobPostById(int id)
         {
             JobPost job = _context.JobPosts.FirstOrDefault(x => x.Id == id);
             return job;

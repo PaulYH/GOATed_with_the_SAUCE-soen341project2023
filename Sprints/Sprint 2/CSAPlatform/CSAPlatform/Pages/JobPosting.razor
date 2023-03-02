@@ -1,7 +1,35 @@
-﻿@page "/job"
+﻿@page "/job/{currentId}"
+@using DatabaseAccess.Data
+@using DatabaseAccess.Entities
+@using Microsoft.AspNetCore.Identity
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
+@inject JobPostService JobPostService
 
-<PageTitle>Job Post</PageTitle>
+<PageTitle>Job Post #@currentId</PageTitle>
+<h2>Job Post #@currentId</h2>
 
 @code {
+    [Parameter]
+    public string? currentId { get; set; }
 
+    public ApplicationUser currentUser;
+    public JobPost currentJobPost { get; set; }
+    public bool jobExist = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetUser();
+
+        if (currentId != null && currentId != String.Empty)
+        {
+            jobExist = true;
+            currentJobPost = JobPostService.GetJobPostById(Int32.Parse(currentId));
+        }
+    }
+
+    public async void GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
 }
