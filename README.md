@@ -7,7 +7,11 @@
 
 In this project, we will develop a career platform web application. On this platform, we will have employers, students (the candidates), and an admin role. Employers will be able to create a profile, login, browse candidates, create job postings as well as select candidates for interviews. The students, similar to employers will be able to create and login to a profile, browse for job offers, and upload their resume. For the role of the admin, they will have complete control over the platform. In other words, they manage all user profiles and postings on the web site.
 
-
+## SPRINT 2 DEMO VIDEO LINK
+Please [click here](https://drive.google.com/file/d/1U-_rpD2ZnDid1fWYgRwbwdHGlMgvlIha/view?usp=sharing) to access the demo video for Sprint 2.
+The two core features we fully implemented are 
+- Job Posting CRUD
+- User Profile (+ PDF Upload)
 
 ## Team Members and Roles:
 
@@ -16,7 +20,7 @@ In this project, we will develop a career platform web application. On this plat
 | Alexis Bernier 40208693 ([Alexis07Bernier](https://github.com/Alexis07Bernier)) | _Project Manager and Front end_ |
 | Tatiana Blogu 40172342 ([tati-b](https://github.com/tati-b)) | _UI/UX and Product Testing and User stories_ |
 | Louis Huynh 40212574 ([Wandering-Fool](https://github.com/Wandering-Fool)) | _Back end and databases_ |
-| Paul Humennyj 40209588 ([PaulYH](https://github.com/PaulYH)) | _Front end and Submission rerview, User stories_ |
+| Paul Humennyj 40209588 ([PaulYH](https://github.com/PaulYH)) | _Front end and Submission review, User stories_ |
 | Nicolas Beaudin Pearson 40096610 ([Patacorn](https://github.com/Patacorn)) | _Product Testing and back end, Minutes meeting_ |
 | Mina Wahba 40190793 ([Monat555](https://github.com/Monat555)) | _Product Testing (QA) and back end_ |
 
