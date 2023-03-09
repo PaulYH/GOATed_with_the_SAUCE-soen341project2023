@@ -1,0 +1,5 @@
+language: csharp
+solution: CSAPlatform.sln
+script:
+ - dotnet restore
+ - dotnet test
