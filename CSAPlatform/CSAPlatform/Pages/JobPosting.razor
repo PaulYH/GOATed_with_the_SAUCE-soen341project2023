@@ -95,7 +95,7 @@ else
 </Field>
 
 <Field hidden="@(!isStudent)">
-    <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/apply");})"></Button>
+    <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/apply");})">Apply</Button>
 </Field>
 
 @code {
