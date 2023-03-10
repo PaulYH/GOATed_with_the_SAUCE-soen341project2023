@@ -94,6 +94,10 @@ else
     <Button Color="Color.Primary" Clicked="@(e => { isEditing = true; })">Edit Post</Button>
 </Field>
 
+<Field hidden="@(!isStudent)">
+    <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/apply");})"></Button>
+</Field>
+
 @code {
     [Parameter]
     public string? currentId { get; set; }

@@ -1,7 +1,8 @@
-﻿@page "/application"
+﻿@page "/job/{currentId}/apply"
 
-<PageTitle>Job Application</PageTitle>
+<PageTitle>Apply for Job #@currentId</PageTitle>
 
 @code {
-
+    [Parameter]
+    public string? currentId { get; set; }
 }
