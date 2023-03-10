@@ -1,6 +1,10 @@
 language: csharp
 mono: none
-dotnet: 6.0.401
+addons:
+ snaps:
+  - name: dotnet-sdk 
+  - confinement: classic
+  - channel: 6.0/beta
 script:
  - dotnet restore
  
