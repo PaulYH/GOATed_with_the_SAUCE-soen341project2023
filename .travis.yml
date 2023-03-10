@@ -1,5 +1,10 @@
 language: csharp
-solution: CSAPlatform.sln
+mono: none
+addons:
+ snaps:
+  - name: dotnet-sdk 
+    confinement: classic
+    channel: 6.0/beta
 script:
- - dotnet restore
- - dotnet test
+ - dotnet build ./CSAPlatform/CSAPlatform.sln
+ 
