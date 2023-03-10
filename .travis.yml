@@ -1,2 +1,2 @@
 language: csharp
-solution: CSAPlatform.sln
+solution: CSAPlatform/CSAPlatform.sln
