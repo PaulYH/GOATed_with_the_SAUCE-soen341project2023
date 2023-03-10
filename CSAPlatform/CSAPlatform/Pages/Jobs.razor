@@ -33,7 +33,7 @@
     </DataGridColumns>
 
     <ButtonRowTemplate>
-        <Button Color="Color.Success" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
+        <Button hidden="@(isStudent)" Color="Color.Success" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
     </ButtonRowTemplate>
 </DataGrid>
 
@@ -49,6 +49,7 @@ else
     private JobPost selectedJob = new JobPost();
     private DataGridEditMode editMode = DataGridEditMode.Form;
     public bool isLoggedIn = false;
+    public bool isStudent = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,6 +58,8 @@ else
         if (currentUser != null)
         {
             isLoggedIn = true;
+            isStudent = (currentUser.Role == RoleType.Student);
+
             if (currentUser.Role == RoleType.Employer)
             {
                 jobList = await JobPostService.GetUserJobPosts(currentUser.Id);
