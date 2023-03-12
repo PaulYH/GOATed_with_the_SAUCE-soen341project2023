@@ -1,7 +1,50 @@
 ﻿@page "/applications"
+@using DatabaseAccess.Data;
+@using DatabaseAccess.Entities;
+@using DatabaseAccess.Enums;
+@using Microsoft.AspNetCore.Identity;
+@inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> UserManager
+@inject HttpContextAccessor HttpContextAccessor
+@inject ApplicationUserService UserService
 
 <PageTitle>My Applications</PageTitle>
+@if (!isStudent)
+{
+    <p>You do not have access to this page</p>
+}
+else
+{
+    <h2>My Applications</h2>
+
+    <DataGrid TItem="JobApplication"
+          Data="@applicationList"
+          RowSelectable=@((e) => { NavigationManager.NavigateTo($"/job/{e.Item.JobPost.Id}/application/{e.Item.Id}"); return true; })
+          Editable
+          Responsive
+          ShowPager
+          CommandMode="DataGridCommandMode.ButtonRow">
+        <DataGridColumns>
+            <DataGridColumn Field="@nameof(JobApplication.Id)" Caption="Application ID" Sortable="false" />
+        </DataGridColumns>
+    </DataGrid>
+}
+
 
 @code {
+    private List<JobApplication> applicationList = new List<JobApplication> { };
+    ApplicationUser currentUser{ get; set; }
+    bool isStudent = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+        isStudent = (currentUser.Role == RoleType.Student);
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
 
 }

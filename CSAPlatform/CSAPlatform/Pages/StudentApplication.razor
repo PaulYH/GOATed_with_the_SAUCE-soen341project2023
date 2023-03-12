@@ -1,4 +1,5 @@
 ﻿@page "/job/{currentId}/apply"
+@page "/job/{currentId}/application/{applicationId}"
 @using BlazorInputFile;
 @using DatabaseAccess.Data;
 @using DatabaseAccess.Entities;
@@ -8,33 +9,51 @@
 @inject ApplicationUserService UserService
 @inject IJSRuntime JsRuntime
 
-<PageTitle>Apply for Job #@currentId</PageTitle>
-<h2>Apply for Job #@currentId</h2>
-
-<BlazorInputFile.InputFile hidden="@isUploaded" OnChange="@(async e => await OnFileUpload(e, currentUser.Id))" />
-<p>@resumeStatus</p>
-@if (currentUser.Attachment != null)
+@if (!isLoaded)
 {
-    <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf(currentUser.Id))">Download File</Button>
-    <Button Color="Color.Danger" Clicked="@(async e => await DeletePdf(currentUser.Id))">Delete</Button>
+    <p> Loading...</p>    
 }
+else
+{
+    @if (applicationId == null)
+    {
+            <PageTitle>Apply for Job #@currentId</PageTitle>
+            <h2>Apply for Job #@currentId</h2>
+    }
+    else
+    {
+            <PageTitle>Application #@applicationId for job #@currentId</PageTitle>
+            <h2>Application #@applicationId for job #@currentId</h2>
+    }
 
-<br />
+    <BlazorInputFile.InputFile hidden="@isUploaded" OnChange="@(async e => await OnFileUpload(e, currentUser.Id))" />
+    <p>@resumeStatus</p>
+    @if (currentUser.Attachment != null)
+    {
+            <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf(currentUser.Id))">Download File</Button>
+            <Button Color="Color.Danger" Clicked="@(async e => await DeletePdf(currentUser.Id))">Delete</Button>
+    }
 
-<BlazorInputFile.InputFile />
-<p>@coverLetterStatus</p>
+    <br />
 
-<br />
-<Button Color="Color.Success" > Submit</Button >
+    <BlazorInputFile.InputFile />
+    <p>@coverLetterStatus</p>
+
+    <br />
+    <Button Color="Color.Success" > Submit</Button >
+}
 
 @code {
     [Parameter]
     public string? currentId { get; set; }
+    [Parameter]
+    public string? applicationId { get; set; }
     ApplicationUser currentUser;
     IFileListEntry file;
     string resumeStatus = "Upload Resume Here";
     string coverLetterStatus = "Upload Cover Letter Here (Optional)";
     bool isUploaded = false;
+    bool isLoaded = false;
     JobApplication aNewJobApplication = new JobApplication();
 
     protected override async Task OnInitializedAsync()
@@ -45,6 +64,7 @@
             isUploaded = true;
             resumeStatus = "A file is currently associated with this account. Please download to view.";
         }
+        isLoaded = true;
     }
 
     public async Task GetUser()
