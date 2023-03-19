@@ -7,6 +7,7 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject HttpContextAccessor HttpContextAccessor
 @inject ApplicationUserService UserService
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 
 @if (!isLoaded)
@@ -40,7 +41,10 @@ else
     <p>@coverLetterStatus</p>
 
     <br />
-    <Button Color="Color.Success" > Submit</Button >
+    @if (applicationId == null)
+    {
+        <Button Color="Color.Success" Clicked="@(() => { NavigationManager.NavigateTo($"/job/{currentId}/application/1"); })"> Submit</Button>
+    }
 }
 
 @code {
