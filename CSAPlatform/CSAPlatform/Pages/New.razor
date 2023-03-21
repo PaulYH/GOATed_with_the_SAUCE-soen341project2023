@@ -118,6 +118,7 @@
         newJobPost.Description = jobDescriptionText;
         newJobPost.Salary = salaryValue;
         newJobPost.User = currentUser;
+        newJobPost.JobApplications = new List<JobApplication>();
 
         Console.WriteLine(JobPostService.CreateJob(newJobPost));
         NavigationManager.NavigateTo($"/job/{newJobPost.Id}");
