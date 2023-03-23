@@ -10,11 +10,21 @@
 @inject ApplicationUserService UserService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject JobPostService JobPostService
+@inject JobApplicationService JobApplicationService
+
 
 @if (!isLoaded)
 {
-    <p> Loading...</p>    
+    <p>@loadingStatus</p>
 }
+
+else if (hasApplied)
+{
+    <p>Position has previously been applied</p>
+    <Button Color="Color.Primary" Clicked="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/application/{appIDExist}");})" >View Application</Button>
+}
+
 else
 {
     <PageTitle>Apply for Job #@currentId</PageTitle>
@@ -28,9 +38,13 @@ else
         <Button Clicked="@(async e => await DeletePdf(currentUser.Id))">Delete</Button>
     }
 
-    <BlazorInputFile.InputFile />
+    <BlazorInputFile.InputFile hidden="@(isCoverLetterUploaded)" OnChange="@(async e => await OnFileUpload(e))" />
     <p>@coverLetterStatus</p>
-
+    @if(coverLetterAttachments != null)
+    {
+        <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf())">Download File</Button>
+        <Button Clicked="@(async e => await DeletePdf())">Delete</Button>
+    }
     @if (isResumeUploaded)
     {
         <Button Color="Color.Success" Clicked="SaveData">Submit</Button>
@@ -46,16 +60,26 @@ else
     public string? currentId { get; set; }
 
     ApplicationUser currentUser;
+    JobPost currentJobPost;
     IFileListEntry file;
+    byte[]? coverLetterAttachments = null;
+    string loadingStatus = "Loading...";
     string resumeStatus = "Upload Resume Here";
     string coverLetterStatus = "Upload Cover Letter Here (Optional)";
     bool isLoaded = false;
     bool isResumeUploaded = false;
+    bool isCoverLetterUploaded = false;
+    bool hasApplied = false;
+    int appIDExist  { get; set; }
     JobApplication newJobApplication = new JobApplication();
+
+
 
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
+        await GetJobPost();
+        await CheckIfApplied();
 
         if (currentUser.Attachment != null)
         {
@@ -70,6 +94,35 @@ else
         currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
     }
 
+    public async Task GetJobPost()
+    {
+        currentJobPost = await JobPostService.GetJobPostById(Convert.ToInt32(currentId));   
+    }
+
+    public async Task CheckIfApplied()
+    {
+        List<JobApplication> appList = await JobApplicationService.GetJobApplicationsByUser(currentUser.Id);
+
+        foreach(JobApplication app in appList)
+        {
+            if(app.JobPost == null)
+            {
+                continue;
+            }
+
+            if(app.JobPost.Id == currentJobPost.Id)
+            {
+                hasApplied = true;
+                appIDExist = app.Id;
+                break;
+            }
+
+
+        }
+    }
+
+
+
     public async Task OnFileUpload(IFileListEntry[] file, string userId)
     {
         var attachment = await FileSender(file.FirstOrDefault());
@@ -78,6 +131,14 @@ else
 
         resumeStatus = $"Uploaded file: {file.FirstOrDefault().Name}";
         isResumeUploaded = true;
+    }
+
+    public async Task OnFileUpload(IFileListEntry[] file)
+    {
+        coverLetterAttachments = await FileSender(file.FirstOrDefault());
+        isCoverLetterUploaded = true;
+        coverLetterStatus = $"Uploaded file: {file.FirstOrDefault().Name}";
+
     }
 
     public async Task<byte[]> FileSender(IFileListEntry file)
@@ -97,17 +158,40 @@ else
         isResumeUploaded = false;
     }
 
+    public async Task DeletePdf()
+    {
+        coverLetterAttachments = null;
+        coverLetterStatus = "File deleted successfully";
+        isCoverLetterUploaded = false;
+    }
+
     public async Task DownloadPdf(string userId)
     {
         var user = UserService.GetUserById(userId);
 
-        await FileUtil.SaveAs(JsRuntime, "uploaded-file.pdf", user.Attachment);
+        await FileUtil.SaveAs(JsRuntime, $"Uploaded-Resume-{newJobApplication.Id.ToString()}.pdf", user.Attachment);
 
         currentUser = UserService.GetUserById(currentUser.Id);
     }
 
+    public async Task DownloadPdf()
+    {
+        await FileUtil.SaveAs(JsRuntime, $"Uploaded-Cover-Letter-{newJobApplication.Id.ToString()}.pdf", coverLetterAttachments);
+
+    }
+
     public void SaveData()
     {
+        newJobApplication.User = currentUser;
+        newJobApplication.JobPost = currentJobPost;
+        newJobApplication.ResumeAttachment = currentUser.Attachment;
+        if(coverLetterAttachments != null)
+        {
+            newJobApplication.CoverLetterAttachment = coverLetterAttachments;
+        }
+        JobApplicationService.CreateApplication(newJobApplication);
         NavigationManager.NavigateTo($"/job/{currentId}/application/{newJobApplication.Id}");
     }
+
+
 }
