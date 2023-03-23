@@ -1,0 +1,113 @@
+﻿@page "/job/{currentId}/apply"
+
+@using BlazorInputFile;
+@using DatabaseAccess.Data;
+@using DatabaseAccess.Entities;
+@using DatabaseAccess.Enums
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<ApplicationUser> UserManager
+@inject HttpContextAccessor HttpContextAccessor
+@inject ApplicationUserService UserService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+@if (!isLoaded)
+{
+    <p> Loading...</p>    
+}
+else
+{
+    <PageTitle>Apply for Job #@currentId</PageTitle>
+    <h2>Apply for Job #@currentId</h2>
+
+    <BlazorInputFile.InputFile hidden="@(isResumeUploaded)" OnChange="@(async e => await OnFileUpload(e, currentUser.Id))" />
+    <p>@resumeStatus</p>
+    @if (currentUser.Attachment != null)
+    {
+        <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf(currentUser.Id))">Download File</Button>
+        <Button Clicked="@(async e => await DeletePdf(currentUser.Id))">Delete</Button>
+    }
+
+    <BlazorInputFile.InputFile />
+    <p>@coverLetterStatus</p>
+
+    @if (isResumeUploaded)
+    {
+        <Button Color="Color.Success" Clicked="SaveData">Submit</Button>
+    }
+    else
+    {
+        <p>Please upload resume to apply.</p>
+    }
+}
+
+@code {
+    [Parameter]
+    public string? currentId { get; set; }
+
+    ApplicationUser currentUser;
+    IFileListEntry file;
+    string resumeStatus = "Upload Resume Here";
+    string coverLetterStatus = "Upload Cover Letter Here (Optional)";
+    bool isLoaded = false;
+    bool isResumeUploaded = false;
+    JobApplication newJobApplication = new JobApplication();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+
+        if (currentUser.Attachment != null)
+        {
+            isResumeUploaded = true;
+            resumeStatus = "A file is currently associated with this account. Please download to view.";
+        }
+        isLoaded = true;
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    public async Task OnFileUpload(IFileListEntry[] file, string userId)
+    {
+        var attachment = await FileSender(file.FirstOrDefault());
+        UserService.UploadPdf(userId, attachment);
+        currentUser = UserService.GetUserById(currentUser.Id);
+
+        resumeStatus = $"Uploaded file: {file.FirstOrDefault().Name}";
+        isResumeUploaded = true;
+    }
+
+    public async Task<byte[]> FileSender(IFileListEntry file)
+    {
+        using (var ms = new MemoryStream())
+        {
+            await file.Data.CopyToAsync(ms);
+            return ms.ToArray();
+        }
+    }
+
+    public async Task DeletePdf(string userId)
+    {
+        UserService.DeletePdf(userId);
+        currentUser = UserService.GetUserById(currentUser.Id);
+        resumeStatus = "File deleted successfully";
+        isResumeUploaded = false;
+    }
+
+    public async Task DownloadPdf(string userId)
+    {
+        var user = UserService.GetUserById(userId);
+
+        await FileUtil.SaveAs(JsRuntime, "uploaded-file.pdf", user.Attachment);
+
+        currentUser = UserService.GetUserById(currentUser.Id);
+    }
+
+    public void SaveData()
+    {
+        NavigationManager.NavigateTo($"/job/{currentId}/application/{newJobApplication.Id}");
+    }
+}
