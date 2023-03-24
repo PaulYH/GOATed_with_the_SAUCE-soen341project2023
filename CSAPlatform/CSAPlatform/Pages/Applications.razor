@@ -7,6 +7,7 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject HttpContextAccessor HttpContextAccessor
 @inject ApplicationUserService UserService
+@inject JobApplicationService JobApplicationService
 
 <PageTitle>My Applications</PageTitle>
 @if (!isStudent)
@@ -18,8 +19,8 @@ else
     <h2>My Applications</h2>
 
     <DataGrid TItem="JobApplication"
-          Data="@applicationList"
-          RowSelectable=@((e) => { NavigationManager.NavigateTo($"/job/{e.Item.JobPost.Id}/application/{e.Item.Id}"); return true; })
+          Data="@appList"
+          RowSelectable=@((e) => { NavigateTo(e.Item); return true; })
           Editable
           Responsive
           ShowPager
@@ -32,14 +33,18 @@ else
 
 
 @code {
-    private List<JobApplication> applicationList = new List<JobApplication> { };
-    ApplicationUser currentUser{ get; set; }
+    private List<JobApplication> appList = new List<JobApplication> { };
+    ApplicationUser? currentUser { get; set; }
     bool isStudent = false;
 
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
-        isStudent = (currentUser.Role == RoleType.Student);
+        if (currentUser != null)
+        {
+            isStudent = (currentUser.Role == RoleType.Student);
+            await GetApplications();
+        }
     }
 
     public async Task GetUser()
@@ -47,4 +52,20 @@ else
         currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
     }
 
+    public async Task GetApplications()
+    {
+        appList = await JobApplicationService.GetJobApplicationsByUser(currentUser.Id);
+    }
+
+    public void NavigateTo(JobApplication app)
+    {
+        if (app == null || app.JobPost == null)
+        {
+            Console.WriteLine("We have a problem here...");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/job/{app.JobPost.Id}/application/{app.Id}");
+        }
+    }
 }

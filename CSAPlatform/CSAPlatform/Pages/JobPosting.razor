@@ -117,6 +117,21 @@ else
     <Field hidden="@(!isStudent)">
         <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/apply");})">Apply</Button>
     </Field>
+
+    <h3 hidden="@(isStudent || isEditing)">Received Applications</h3>
+    <DataGrid hidden="@(isStudent || isEditing)" 
+          TItem="JobApplication"
+          Data="@appList"
+          RowSelectable=@((e) => { NavigateTo(e.Item); return true; })
+          Editable
+          Responsive
+          ShowPager
+          CommandMode="DataGridCommandMode.ButtonRow">
+        <DataGridColumns>
+            <DataGridColumn Field="@nameof(JobApplication.Id)" Caption="Application ID" Sortable="false" />
+        </DataGridColumns>
+    </DataGrid>
+    
 }
 
 @code {
@@ -125,7 +140,7 @@ else
 
     public ApplicationUser currentUser;
     public JobPost currentJobPost { get; set; }
-    public List<JobApplication> appList { get; set; }
+    public List<JobApplication> appList = new List<JobApplication>();
     public bool jobExist = false;
     public bool isLoading = true;
     public bool isStudent = false;
@@ -160,6 +175,8 @@ else
                 jobTitleText = currentJobPost.JobTitle;
                 jobDescriptionText = currentJobPost.Description;
                 salaryValue = currentJobPost.Salary;
+
+                await GetApplications();
             }
         }
         isLoading = false;
@@ -206,5 +223,17 @@ else
         }
         JobPostService.DeleteJob(currentJobPost);
         isDeleted = true;
+    }
+
+    public void NavigateTo(JobApplication app)
+    {
+        if (app == null || app.JobPost == null)
+        {
+            Console.WriteLine("We have a problem here...");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/job/{app.JobPost.Id}/application/{app.Id}");
+        }
     }
 }
