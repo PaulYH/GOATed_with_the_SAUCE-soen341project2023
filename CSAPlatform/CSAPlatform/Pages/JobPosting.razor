@@ -6,6 +6,7 @@
 @inject HttpContextAccessor HttpContextAccessor
 @inject UserManager<ApplicationUser> UserManager
 @inject JobPostService JobPostService
+@inject JobApplicationService JobApplicationService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Job Post #@currentId</PageTitle>
@@ -14,89 +15,109 @@
     <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo("/jobs");})">Back</Button>
 </Field>
 
-@if(!isEditing)
+@if (isDeleted)
 {
-<h2>Job Post #@currentId</h2>        
+    <p>Job Post deleted.</p>
+}
+else if (!jobExist)
+{
+    if (isLoading)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <p>This job post does not exist.</p>
+    }
+    
 }
 else
 {
-<h2>Edit Job Post #@currentId</h2>
+    @if (!isEditing)
+    {
+        <h2>Job Post #@currentId</h2>
+    }
+    else
+    {
+        <h2>Edit Job Post #@currentId</h2>
+    }
+
+    <Field>
+        <FieldLabel>
+            Job Title
+        </FieldLabel>
+        <TextEdit Disabled="@(isStudent || !isEditing)" Placeholder="Job Title" @bind-Text="jobTitleText" />
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Creation Date
+        </FieldLabel>
+        <DateEdit TValue="DateTime" @bind-Date="creationTime" Disabled />
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Expiration Date
+        </FieldLabel>
+        <DateEdit Disabled="@(isStudent || !isEditing)" TValue="DateTime" @bind-Date="expirationTime" />
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Job Status
+        </FieldLabel>
+        <RadioGroup Disabled="@(isStudent || !isEditing)" TValue="PostStatusType" Name="status" @bind-CheckedValue="status">
+            <Radio Disabled="@(isStudent || !isEditing)" Value="@(PostStatusType.Open)">Open</Radio>
+            <Radio Disabled="@(isStudent || !isEditing)" Value="@(PostStatusType.Expired)">Expired</Radio>
+        </RadioGroup>
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Job Type
+        </FieldLabel>
+        <RadioGroup Disabled="@(isStudent || !isEditing)" TValue="JobType" Name="jobType" @bind-CheckedValue="jobType">
+            <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Onsite)">Onsite</Radio>
+            <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Remote)">Remote</Radio>
+            <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Hybrid)">Hybrid</Radio>
+        </RadioGroup>
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Location
+        </FieldLabel>
+        <TextEdit Disabled="@(isStudent || !isEditing)" Placeholder="Location" @bind-Text="locationText" />
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Job Description
+        </FieldLabel>
+        <MemoEdit Disabled="@(isStudent || !isEditing)" @bind-Text="jobDescriptionText" Rows="5" />
+    </Field>
+
+    <Field>
+        <FieldLabel>
+            Salary (Hourly)
+        </FieldLabel>
+        <NumericEdit Disabled="@(isStudent || !isEditing)" TValue="decimal" @bind-Value="salaryValue" />
+    </Field>
+
+    <Field hidden="@(isStudent || !isEditing)">
+        <Button Color="Color.Success" Clicked="UpdateData">Save Changes</Button>
+    </Field>
+
+    <Field hidden="@(isStudent || isEditing)">
+        <Button Color="Color.Primary" Clicked="@(e => { isEditing = true; })">Edit Post</Button>
+        <Button Color="Color.Danger" Clicked="DeletePosting">Delete Post</Button>
+    </Field>
+
+    <Field hidden="@(!isStudent)">
+        <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/apply");})">Apply</Button>
+    </Field>
 }
-
-<Field>
-    <FieldLabel>
-        Job Title
-    </FieldLabel>
-    <TextEdit Disabled="@(isStudent || !isEditing)" Placeholder="Job Title" @bind-Text="jobTitleText" />
-</Field>
-
-<Field>
-    <FieldLabel>
-        Creation Date
-    </FieldLabel>
-    <DateEdit TValue="DateTime" @bind-Date="creationTime" Disabled />
-</Field>
-
-<Field>
-    <FieldLabel>
-        Expiration Date
-    </FieldLabel>
-    <DateEdit Disabled="@(isStudent || !isEditing)" TValue="DateTime" @bind-Date="expirationTime"/>
-</Field>
-
-<Field>
-    <FieldLabel>
-        Job Status
-    </FieldLabel>
-    <RadioGroup Disabled="@(isStudent || !isEditing)" TValue="PostStatusType" Name="status" @bind-CheckedValue="status">
-        <Radio Disabled="@(isStudent || !isEditing)" Value="@(PostStatusType.Open)">Open</Radio>
-        <Radio Disabled="@(isStudent || !isEditing)" Value="@(PostStatusType.Expired)">Expired</Radio>
-    </RadioGroup>
-</Field>
-
-<Field>
-    <FieldLabel>
-        Job Type
-    </FieldLabel>
-    <RadioGroup Disabled="@(isStudent || !isEditing)" TValue="JobType" Name="jobType" @bind-CheckedValue="jobType">
-        <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Onsite)">Onsite</Radio>
-        <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Remote)">Remote</Radio>
-        <Radio Disabled="@(isStudent || !isEditing)" Value="@(JobType.Hybrid)">Hybrid</Radio>
-    </RadioGroup>
-</Field>
-
-<Field>
-    <FieldLabel>
-        Location
-    </FieldLabel>
-    <TextEdit Disabled="@(isStudent || !isEditing)" Placeholder="Location" @bind-Text="locationText" />
-</Field>
-
-<Field>
-    <FieldLabel>
-        Job Description
-    </FieldLabel>
-    <MemoEdit Disabled="@(isStudent || !isEditing)" @bind-Text="jobDescriptionText" Rows="5" />
-</Field>
-
-<Field>
-    <FieldLabel>
-        Salary (Hourly)
-    </FieldLabel>
-    <NumericEdit Disabled="@(isStudent || !isEditing)" TValue="decimal" @bind-Value="salaryValue" />
-</Field>
-
-<Field hidden="@(isStudent || !isEditing)">
-    <Button Color="Color.Success" Clicked="UpdateData">Save Changes</Button>
-</Field>
-
-<Field hidden="@(isStudent || isEditing)">
-    <Button Color="Color.Primary" Clicked="@(e => { isEditing = true; })">Edit Post</Button>
-</Field>
-
-<Field hidden="@(!isStudent)">
-    <Button Color="Color.Primary" onclick="@(() => {NavigationManager.NavigateTo($"/job/{currentId}/apply");})">Apply</Button>
-</Field>
 
 @code {
     [Parameter]
@@ -104,9 +125,12 @@ else
 
     public ApplicationUser currentUser;
     public JobPost currentJobPost { get; set; }
+    public List<JobApplication> appList { get; set; }
     public bool jobExist = false;
+    public bool isLoading = true;
     public bool isStudent = false;
     public bool isEditing = false;
+    public bool isDeleted = false;
 
     DateTime creationTime { get; set; }
     DateTime expirationTime { get; set; }
@@ -124,19 +148,21 @@ else
 
         if (currentId != null && currentId != String.Empty)
         {
-            jobExist = true;
             currentJobPost = await JobPostService.GetJobPostById(Int32.Parse(currentId));
-
-            creationTime = currentJobPost.CreationDate;
-            expirationTime = currentJobPost.ExpirationDate;
-            status = currentJobPost.Status;
-            jobType = currentJobPost.JobType;
-            locationText = currentJobPost.Location;
-            jobTitleText = currentJobPost.JobTitle;
-            jobDescriptionText = currentJobPost.Description;
-            salaryValue = currentJobPost.Salary;
-
+            if (currentJobPost != null)
+            {
+                jobExist = true;
+                creationTime = currentJobPost.CreationDate;
+                expirationTime = currentJobPost.ExpirationDate;
+                status = currentJobPost.Status;
+                jobType = currentJobPost.JobType;
+                locationText = currentJobPost.Location;
+                jobTitleText = currentJobPost.JobTitle;
+                jobDescriptionText = currentJobPost.Description;
+                salaryValue = currentJobPost.Salary;
+            }
         }
+        isLoading = false;
     }
 
     public async Task GetUser()
@@ -144,7 +170,12 @@ else
         currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
     }
 
-    public async Task UpdateData()
+    public async Task GetApplications()
+    {
+        appList = await JobApplicationService.GetJobApplicationsByPost(currentJobPost.Id);
+    }
+
+    public void UpdateData()
     {
         currentJobPost.CreationDate = creationTime;
         currentJobPost.ExpirationDate = expirationTime;
@@ -158,5 +189,22 @@ else
 
         Console.WriteLine(JobPostService.UpdateJob(currentJobPost));
         NavigationManager.NavigateTo($"/job/{currentId}", true);
+    }
+
+    public void DeletePosting()
+    {
+        if (appList != null)
+        {
+            foreach (JobApplication app in appList)
+            {
+                if (app == null)
+                {
+                    continue;
+                }
+                JobApplicationService.DeleteApplication(app);
+            }
+        }
+        JobPostService.DeleteJob(currentJobPost);
+        isDeleted = true;
     }
 }
