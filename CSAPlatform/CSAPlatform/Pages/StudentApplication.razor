@@ -1,11 +1,61 @@
 ﻿@page "/job/{jobId}/application/{applicationId}"
+@using DatabaseAccess.Data;
+@using DatabaseAccess.Entities;
+@using Microsoft.AspNetCore.Identity;
+@inject EmailService EmailService
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
+@inject JobPostService JobPostService
+@inject JobApplicationService JobApplicationService
+@inject NavigationManager NavigationManager
+@inject ApplicationUserService ApplicationUserService
 
 <PageTitle>Application #@applicationId for Job Post #@jobId</PageTitle>
 <h3>Application #@applicationId for Job Post #@jobId</h3>
+<Button Clicked="Respond">Send Email</Button>
 
 @code {
     [Parameter]
     public string? jobId { get; set; }
     [Parameter]
     public string? applicationId { get; set; }
+    ApplicationUser? currentUser;
+    JobPost? currentJobPost;
+    JobApplication? currentApp;
+    bool isLoaded = false;
+    bool isError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+        await GetJobPost();
+        await GetApplication();
+
+        if (currentUser == null || currentJobPost == null || currentApp == null)
+        {
+            isError = true;
+        }
+
+        isLoaded = true;
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    public async Task GetJobPost()
+    {
+        currentJobPost = await JobPostService.GetJobPostById(Convert.ToInt32(jobId));
+    }
+
+    public async Task GetApplication()
+    {
+        currentApp = await JobApplicationService.GetJobApplicationById(Convert.ToInt32(applicationId));
+    }
+
+    public void Respond()
+    {
+        EmailService.SendEmail(currentUser, currentJobPost, currentApp);
+    }
 }
