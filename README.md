@@ -17,7 +17,7 @@ The two core features we fully implemented are
 
 | Members | Roles |
 | :----: | :----: |
-| Alexis Bernier 40208693 ([Alexis07Bernier](https://github.com/Alexis07Bernier)) | _Project Manager and Front end_ |
+| Alexis Bernier 40208693 ([Alexis07Bernier](https://github.com/Alexis07Bernier)) | _Project Manager, Front end and code review_ |
 | Tatiana Blogu 40172342 ([tati-b](https://github.com/tati-b)) | _UI/UX and Product Testing and User stories_ |
 | Louis Huynh 40212574 ([Wandering-Fool](https://github.com/Wandering-Fool)) | _Back end and databases_ |
 | Paul Humennyj 40209588 ([PaulYH](https://github.com/PaulYH)) | _Front end and Submission review, User stories_ |
