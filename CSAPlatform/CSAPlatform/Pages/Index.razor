@@ -1,9 +1,56 @@
 ﻿@page "/"
+@using DatabaseAccess.Entities;
+@using Microsoft.AspNetCore.Identity;
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new application.
+@if(isLoggedIn && isLoaded)
+{
+    @if (!String.IsNullOrEmpty(currentUser.FirstName))
+    {
+        <h1>Welcome, @currentUser.FirstName</h1>
+    }
+    else if (!String.IsNullOrEmpty(currentUser.UserName))
+    {
+        <h1>Welcome, @currentUser.UserName</h1>
+    }
+    else
+    {
+        <h1>Welcome, User</h1>
+    }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <h3>You are logged in as: @currentUser.Role</h3>
+}
+else if (!isLoggedIn && isLoaded)
+{
+    <h1>Welcome to the Career Services Application</h1>
+    <h3>Please create an account to continue.</h3>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+
+@code {
+    ApplicationUser currentUser;
+    bool isLoaded = false;
+    bool isLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+        isLoaded = true;
+
+    }
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        if (currentUser != null)
+            isLoggedIn = true;
+    }
+}

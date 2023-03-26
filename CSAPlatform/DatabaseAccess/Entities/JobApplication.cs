@@ -14,6 +14,9 @@ namespace DatabaseAccess.Entities
         public int Id { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public AppStatusType Status { get; set; } = AppStatusType.Submitted;
+        public byte[]? ResumeAttachment { get; set; } = null;
+        public byte[]? CoverLetterAttachment { get; set; } = null;
+
 
         // Database Relationships
         public ApplicationUser User { get; set; } = null!;

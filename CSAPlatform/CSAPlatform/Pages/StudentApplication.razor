@@ -1,7 +1,218 @@
-﻿@page "/application"
+﻿@page "/job/{jobId}/application/{applicationId}"
+@using DatabaseAccess.Data;
+@using DatabaseAccess.Entities;
+@using DatabaseAccess.Enums
+@using Microsoft.AspNetCore.Identity;
+@inject IJSRuntime JsRuntime
+@inject EmailService EmailService
+@inject HttpContextAccessor HttpContextAccessor
+@inject UserManager<ApplicationUser> UserManager
+@inject JobPostService JobPostService
+@inject JobApplicationService JobApplicationService
+@inject NavigationManager NavigationManager
+@inject ApplicationUserService ApplicationUserService
 
-<PageTitle>Job Application</PageTitle>
+@if (isLoaded && !isError)
+{
+    <PageTitle>Application #@currentApp.Id</PageTitle>
+    <h3><b>Application #@currentApp.Id for @currentJobPost.JobTitle</b></h3>
+    <h4><b>Employer:</b> @employerCompany</h4>
+    <p></p>
+    <h4><b>Status:</b> @currentStatus</h4>
+    <p></p>
+    <h4><b>Applicant Information</b></h4>
+    <p><b>Name:</b> @applicantName</p>
+    <p><b>Student Number:</b> @applicantNum</p>
+    <p><b>Email:</b> @applicantEmail</p>
+    <p><b>Phone Number:</b> @applicantPhone</p>
+    <p><b>University:</b> @applicantUni</p>
+    <p><b>Program:</b> @applicantProgram</p>
+    <p></p>
+
+    @if (appResume != null)
+    {
+        <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf(appResume, true))">Resume Download</Button>
+
+    }
+    
+    @if (appCoverLetter != null)
+    {
+        <Button Color="Color.Primary" Clicked="@(async e => await DownloadPdf(appCoverLetter, false))">Cover Letter Download</Button>
+    }
+
+    @if (currentStatus == AppStatusType.Submitted && currentUser.Role != RoleType.Student)
+    {
+        <p></p>
+        <h4><b>Change Application Status</b></h4>
+        <Select TValue="AppStatusType" @bind-SelectedValue="chosenStatus">
+            <SelectItem Value="AppStatusType.Selected">Select for interview</SelectItem>
+            <SelectItem Value="AppStatusType.Rejected">Reject Application</SelectItem>
+        </Select>
+        @if (chosenStatus == AppStatusType.Selected)
+        {
+            <p></p>
+            <p>Please select an interview date:</p>
+            <Field>
+                <Row>
+                    <Column>
+                        <DateEdit TValue="DateTime" @bind-Date="@chosenDate" />
+                    </Column>
+                    <Column>
+                        <TimeEdit TValue="TimeSpan" @bind-Time="@chosenTime" />
+                    </Column>
+                </Row>
+            </Field>
+        }
+        <Button Color="Color.Success" Clicked="Respond">Submit</Button>
+    }
+    @if (isSent)
+    {
+        <Alert Color="Color.Success">Application successfully updated!</Alert>
+    }
+}
+else if (isError)
+{
+    <p>There was an error</p>
+}
+else
+{
+    <PageTitle>Application Loading...</PageTitle>
+    <p>Loading...</p>
+}
+
+
 
 @code {
+    [Parameter]
+    public string? jobId { get; set; }
+    [Parameter]
+    public string? applicationId { get; set; }
 
+    ApplicationUser currentUser { get; set; }
+    ApplicationUser currentStudent { get; set; }
+    ApplicationUser currentEmployer { get; set; }
+    JobPost currentJobPost { get; set; }
+    JobApplication currentApp { get; set; }
+    bool isLoaded = false;
+    bool isError = false;
+    bool isSent = false;
+
+    string applicantName = "";
+    string applicantNum = "";
+    string applicantEmail = "";
+    string applicantPhone = "";
+    string applicantUni = "";
+    string applicantProgram = "";
+
+    AppStatusType currentStatus { get; set; }
+    AppStatusType chosenStatus { get; set; }
+    DateTime appCreationDate { get; set; }
+    byte[]? appResume { get; set; }
+    byte[]? appCoverLetter { get; set; }
+
+    DateTime chosenDate { get; set; } = DateTime.Now;
+    TimeSpan chosenTime { get; set; } = DateTime.Now.TimeOfDay;
+
+    string employerName = "";
+    string employerCompany = "";
+    string employerEmail = "";
+    string employerPhone = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+
+        await GetJobPost();
+        await GetApplication();
+
+        await GetStudent();
+        await GetEmployer();
+
+        if (currentStudent == null || currentEmployer == null || currentJobPost == null || currentApp == null)
+        {
+            isError = true;
+        }
+
+        isLoaded = true;
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    public async Task GetStudent()
+    {
+        currentStudent = ApplicationUserService.GetUserById(currentApp.User.Id);
+        if (currentStudent != null)
+        {
+            applicantName = currentStudent.FirstName + " " + currentStudent.LastName;
+            applicantNum = currentStudent.StudentNum;
+            applicantEmail = currentStudent.Email;
+            applicantPhone = currentStudent.PhoneNumber;
+            applicantUni = currentStudent.University;
+            applicantProgram = currentStudent.Program;
+        }
+    }
+
+    public async Task GetEmployer()
+    {
+        currentEmployer = ApplicationUserService.GetUserById(currentJobPost.User.Id);
+        if (currentEmployer != null)
+        {
+            employerName = currentEmployer.FirstName + " " + currentEmployer.LastName;
+            employerCompany = currentEmployer.CompanyName;
+            employerEmail = currentEmployer.Email;
+            employerPhone = currentEmployer.PhoneNumber;
+        }
+    }
+
+    public async Task GetJobPost()
+    {
+        currentJobPost = await JobPostService.GetJobPostById(Convert.ToInt32(jobId));
+    }
+
+    public async Task GetApplication()
+    {
+        currentApp = await JobApplicationService.GetJobApplicationById(Convert.ToInt32(applicationId));
+        if (currentApp != null)
+        {
+            currentStatus = currentApp.Status;
+            if (currentStatus == AppStatusType.Submitted)
+            {
+                chosenStatus = AppStatusType.Selected;
+            }
+            else
+            {
+                chosenStatus = currentStatus;
+            }
+            appCreationDate = currentApp.CreationDate;
+            appResume = currentApp.ResumeAttachment;
+            appCoverLetter = currentApp.CoverLetterAttachment;
+        }
+    }
+
+    public async Task DownloadPdf(byte[] doc, bool isResume)
+    {
+        if (isResume)
+        {
+            await FileUtil.SaveAs(JsRuntime, $"{applicantNum}-resume.pdf", doc);
+        }
+        else
+        {
+            await FileUtil.SaveAs(JsRuntime, $"{applicantNum}-cover-letter.pdf", doc);
+        }
+    }
+
+    public void Respond()
+    {
+        chosenDate = new DateTime(chosenDate.Year, chosenDate.Month, chosenDate.Day, 0, 0, 0);
+        chosenDate = chosenDate.Add(chosenTime);
+
+        currentStatus = chosenStatus;
+        currentApp.Status = chosenStatus;
+        JobApplicationService.UpdateApplication(currentApp);
+
+        EmailService.SendEmail(currentStudent, currentJobPost, currentApp, chosenStatus, chosenDate);
+    }
 }

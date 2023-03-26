@@ -1,4 +1,5 @@
 ﻿using DatabaseAccess.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace DatabaseAccess.Data
 
         public ApplicationUser GetUserById(string userId)
         {
-            ApplicationUser user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            ApplicationUser user = _context.Users.Include(user => user.JobApplications).Include(user => user.JobPosts).FirstOrDefault(x => x.Id == userId);
             return user;
         }
 

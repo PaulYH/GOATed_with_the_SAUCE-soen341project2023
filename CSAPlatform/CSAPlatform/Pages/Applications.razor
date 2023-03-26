@@ -1,7 +1,71 @@
 ﻿@page "/applications"
+@using DatabaseAccess.Data;
+@using DatabaseAccess.Entities;
+@using DatabaseAccess.Enums;
+@using Microsoft.AspNetCore.Identity;
+@inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> UserManager
+@inject HttpContextAccessor HttpContextAccessor
+@inject ApplicationUserService UserService
+@inject JobApplicationService JobApplicationService
 
 <PageTitle>My Applications</PageTitle>
+@if (!isStudent)
+{
+    <p>You do not have access to this page</p>
+}
+else
+{
+    <h2>My Applications</h2>
+
+    <DataGrid TItem="JobApplication"
+          Data="@appList"
+          RowSelectable=@((e) => { NavigateTo(e.Item); return true; })
+          Editable
+          Responsive
+          ShowPager
+          CommandMode="DataGridCommandMode.ButtonRow">
+        <DataGridColumns>
+            <DataGridColumn Field="@nameof(JobApplication.Id)" Caption="Application ID" Sortable="false" />
+        </DataGridColumns>
+    </DataGrid>
+}
+
 
 @code {
+    private List<JobApplication> appList = new List<JobApplication> { };
+    ApplicationUser? currentUser { get; set; }
+    bool isStudent = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+        if (currentUser != null)
+        {
+            isStudent = (currentUser.Role == RoleType.Student);
+            await GetApplications();
+        }
+    }
+
+    public async Task GetUser()
+    {
+        currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+    }
+
+    public async Task GetApplications()
+    {
+        appList = await JobApplicationService.GetJobApplicationsByUser(currentUser.Id);
+    }
+
+    public void NavigateTo(JobApplication app)
+    {
+        if (app == null || app.JobPost == null)
+        {
+            Console.WriteLine("We have a problem here...");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/job/{app.JobPost.Id}/application/{app.Id}");
+        }
+    }
 }
