@@ -7,8 +7,11 @@
 
 In this project, we will develop a career platform web application. On this platform, we will have employers, students (the candidates), and an admin role. Employers will be able to create a profile, login, browse candidates, create job postings as well as select candidates for interviews. The students, similar to employers will be able to create and login to a profile, browse for job offers, and upload their resume. For the role of the admin, they will have complete control over the platform. In other words, they manage all user profiles and postings on the web site.
 
-## SPRINT 2 DEMO VIDEO LINK
-Please [click here](https://drive.google.com/file/d/1U-_rpD2ZnDid1fWYgRwbwdHGlMgvlIha/view?usp=sharing) to access the demo video for Sprint 2.
+## SPRINT 3 DEMO VIDEO LINK
+Please [click here](https://drive.google.com/file/d/1SDKrrqiDeL1R4NIel5G6c5udiGiDIuHO/view?usp=share_link) to access the demo video for Sprint 3.
+
+## Old Videos
+[Click here](https://drive.google.com/file/d/1U-_rpD2ZnDid1fWYgRwbwdHGlMgvlIha/view?usp=sharing) to view the demo video for Sprint 2.
 The two core features we fully implemented are 
 - Job Posting CRUD
 - User Profile (+ PDF Upload)
