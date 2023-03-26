@@ -4,6 +4,7 @@ using FluentEmail.Smtp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,15 +15,18 @@ namespace DatabaseAccess.Data
     {
         public async Task SendEmail(ApplicationUser Recipient, JobPost Jobpost, JobApplication App) 
         {
-            var sender = new SmtpSender(() => new SmtpClient("localhost")
+            string fromMail = "csaplatform3412023@gmail.com";
+            string fromPassword = "lgisywqyebvsniab";
+
+            var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
             {
-                EnableSsl = false, 
-                DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
-                PickupDirectoryLocation = @"C:\SOEN341Temp"
-            }) ;
+                EnableSsl = true,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                Port = 587
+            });
             Email.DefaultSender = sender;
             var email = await Email
-                .From("test@testemail.ca")
+                .From(fromMail)
                 .To(Recipient.Email,Recipient.FirstName)
                 .Subject("Notification on your application")
                 .Body("We are happy to inform you ..")
