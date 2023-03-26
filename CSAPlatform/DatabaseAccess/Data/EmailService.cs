@@ -1,4 +1,5 @@
 ﻿using DatabaseAccess.Entities;
+using DatabaseAccess.Enums;
 using FluentEmail.Core;
 using FluentEmail.Smtp;
 using System;
@@ -13,24 +14,27 @@ namespace DatabaseAccess.Data
 {
     public class EmailService
     {
-        public async Task SendEmail(ApplicationUser Recipient, JobPost Jobpost, JobApplication App) 
+        public async Task SendEmail(ApplicationUser Recipient, JobPost Jobpost, JobApplication App, AppStatusType status, DateTime intDate) 
         {
-            string fromMail = "csaplatform3412023@gmail.com";
-            string fromPassword = "lgisywqyebvsniab";
-
-            var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
+            if (status == AppStatusType.Selected)
             {
-                EnableSsl = true,
-                Credentials = new NetworkCredential(fromMail, fromPassword),
-                Port = 587
-            });
-            Email.DefaultSender = sender;
-            var email = await Email
-                .From(fromMail)
-                .To(Recipient.Email,Recipient.FirstName)
-                .Subject("Notification on your application")
-                .Body("We are happy to inform you ..")
-                .SendAsync();
+                string fromMail = "csaplatform3412023@gmail.com";
+                string fromPassword = "lgisywqyebvsniab";
+
+                var sender = new SmtpSender(() => new SmtpClient("smtp.gmail.com")
+                {
+                    EnableSsl = true,
+                    Credentials = new NetworkCredential(fromMail, fromPassword),
+                    Port = 587
+                });
+                Email.DefaultSender = sender;
+                var email = await Email
+                    .From(fromMail)
+                    .To(Recipient.Email, Recipient.FirstName)
+                    .Subject($"Notification on your application - {Jobpost.JobTitle}")
+                    .Body($"We are happy to inform you that you have been selected for an interview!\n\nYour interview is scheduled on the following date:\n{intDate.ToString()}")
+                    .SendAsync();
+            }
         }
     }
 }

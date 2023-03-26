@@ -1,4 +1,5 @@
 ﻿using DatabaseAccess.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +19,18 @@ namespace DatabaseAccess.Data
 
         public async Task<JobApplication> GetJobApplicationById(int appId)
         {
-            var app = _context.JobApplications.FirstOrDefault(x => x.Id == appId);
+            var app = _context.JobApplications.Include(a => a.User).Include(a => a.JobPost).FirstOrDefault(x => x.Id == appId);
             return app;
         }
         public async Task<List<JobApplication>> GetJobApplicationsByUser(string userId)
         {
-            var appList = _context.JobApplications.Where(x => x.User.Id == userId).ToList();
+            var appList = _context.JobApplications.Include(a => a.User).Include(a => a.JobPost).Where(x => x.User.Id == userId).ToList();
             return appList;
         }
 
         public async Task<List<JobApplication>> GetJobApplicationsByPost(int postId)
         {
-            var appList = _context.JobApplications.Where(x => x.JobPost.Id == postId).ToList();
+            var appList = _context.JobApplications.Include(a => a.User).Include(a => a.JobPost).Where(x => x.JobPost.Id == postId).ToList();
             return appList;
         }
 
