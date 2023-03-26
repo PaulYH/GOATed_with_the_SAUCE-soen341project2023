@@ -16,6 +16,11 @@ namespace DatabaseAccess.Data
             _context = context;
         }
 
+        public async Task<JobApplication> GetJobApplicationById(int appId)
+        {
+            var app = _context.JobApplications.FirstOrDefault(x => x.Id == appId);
+            return app;
+        }
         public async Task<List<JobApplication>> GetJobApplicationsByUser(string userId)
         {
             var appList = _context.JobApplications.Where(x => x.User.Id == userId).ToList();

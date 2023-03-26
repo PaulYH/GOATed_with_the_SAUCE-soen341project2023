@@ -28,6 +28,7 @@ builder.Services.AddScoped<JobPostService>();
 builder.Services.AddScoped<JobApplicationService>();
 builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddScoped<ApplicationUserService>();
+builder.Services.AddScoped<EmailService>();
 builder.Services
     .AddBlazorise(options =>
     {
