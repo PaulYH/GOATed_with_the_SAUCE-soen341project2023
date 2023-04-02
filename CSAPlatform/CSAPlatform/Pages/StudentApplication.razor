@@ -63,6 +63,9 @@
                 </Row>
             </Field>
         }
+        <p></p>
+        <MemoEdit Placeholder="Insert custom message..." @bind-Text="@customMessage" />
+        <p></p>
         <Button Color="Color.Success" Clicked="Respond">Submit</Button>
     }
     @if (isSent)
@@ -117,6 +120,8 @@ else
     string employerCompany = "";
     string employerEmail = "";
     string employerPhone = "";
+
+    string customMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
