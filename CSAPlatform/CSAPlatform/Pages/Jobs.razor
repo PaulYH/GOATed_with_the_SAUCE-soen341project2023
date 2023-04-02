@@ -18,6 +18,7 @@
           @bind-SelectedRow="@selectedJob"
           RowSelectable=@((e) => { NavigationManager.NavigateTo($"/job/{e.Item.Id}"); return true; })
           Editable
+          Filterable
           Responsive
           ShowPager
           CommandMode="DataGridCommandMode.ButtonRow"
@@ -25,12 +26,30 @@
     <DataGridColumns>
         <DataGridColumn Field="@nameof(JobPost.Id)" Caption="#Job ID" Sortable="false" />
         <DataGridColumn Field="@nameof(JobPost.JobTitle)" Caption="Job Title" />
-        <DataGridColumn Field="@nameof(JobPost.CreationDate)" Caption="Creation Date" />
-        <DataGridColumn Field="@nameof(JobPost.ExpirationDate)" Caption="Expiration Date" />
+        <DataGridColumn Field="@nameof(JobPost.CreationDate)" Filterable="false" Caption="Creation Date" />
+        <DataGridColumn Field="@nameof(JobPost.ExpirationDate)" Filterable="false" Caption="Expiration Date" />
         <DataGridColumn Field="@nameof(JobPost.Location)" Caption="Location" />
-        <DataGridColumn Field="@nameof(JobPost.Status)" Caption="Status" />
-        <DataGridColumn Field="@nameof(JobPost.JobType)" Caption="Type" />
+        <DataGridSelectColumn CustomFilter="@OnCustomFilter" Editable Field="@nameof(JobPost.Status)" Caption="Status" >
+                <FilterTemplate>
+                    <Select TValue="string" SelectedValue="@selectedStatusFilter" SelectedValueChanged="@(value => { selectedStatusFilter = value; context.TriggerFilterChange( selectedStatusFilter ); })">
+                        <SelectItem Value="@("*")"> All </SelectItem>
+                        <SelectItem Value="@("Open")">Open </SelectItem>
+                        <SelectItem Value="@("Expired")">Expired </SelectItem>
+                    </Select>
+                </FilterTemplate>
+        </DataGridSelectColumn>
+        <DataGridSelectColumn CustomFilter="@OnCustomFilter" Editable Field="@nameof(JobPost.JobType)" Caption="Job Type">
+            <FilterTemplate>
+                <Select TValue="string" SelectedValue="@selectedJobTypeFilter" SelectedValueChanged="@(value => { selectedJobTypeFilter = value; context.TriggerFilterChange( selectedJobTypeFilter ); })"> 
+                    <SelectItem Value="@("*")"> All </SelectItem>
+                    <SelectItem Value="@("Onsite")">Onsite </SelectItem>
+                    <SelectItem Value="@("Remote")">Remote </SelectItem>
+                    <SelectItem Value="@("Hybrid")">Hybrid </SelectItem>
+                </Select>
+            </FilterTemplate>
+        </DataGridSelectColumn>
     </DataGridColumns>
+    
 
     <ButtonRowTemplate>
         <Button hidden="@(isStudent)" Color="Color.Success" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
@@ -50,6 +69,8 @@ else
     private DataGridEditMode editMode = DataGridEditMode.Form;
     public bool isLoggedIn = false;
     public bool isStudent = false;
+    public string selectedJobTypeFilter;
+    public string selectedStatusFilter;
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,5 +98,17 @@ else
     {
         currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
     }
+
+    public bool OnCustomFilter(object itemValue, object searchValue)
+    {
+          if ( searchValue is string customFilter )
+        {
+            return customFilter == "*" || customFilter == itemValue?.ToString();
+        }
+
+        return true;
+    }
+
+
 
 }
