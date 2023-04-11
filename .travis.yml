@@ -1,10 +1,14 @@
 language: csharp
+dist: trusty
 mono: none
 addons:
   snaps:
     - name: dotnet-sdk
       confinement: classic
       channel: 6.0/beta
+
+install:
+  - dotnet restore ./CSAPlatform/CSAPlatform.sln
 script:
   - dotnet build ./CSAPlatform/CSAPlatform.sln
-  - dotnet test
+  - dotnet test ./UnitTesting/UnitTesting.csproj
