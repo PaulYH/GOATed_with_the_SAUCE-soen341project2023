@@ -6,9 +6,6 @@ addons:
     - name: dotnet-sdk
       confinement: classic
       channel: 6.0/beta
-
-install:
-  - dotnet restore ./CSAPlatform/CSAPlatform.sln
 script:
   - dotnet build ./CSAPlatform/CSAPlatform.sln
   - dotnet test ./UnitTesting/UnitTesting.csproj
