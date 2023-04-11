@@ -7,4 +7,4 @@ addons:
       channel: 6.0/beta
 script:
   - dotnet build ./CSAPlatform/CSAPlatform.sln
-  - dotnet test ./UnitTesting/UnitTesting.csproj
+  - dotnet test ./CSAPlatform/UnitTesting/UnitTesting.csproj
