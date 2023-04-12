@@ -26,6 +26,7 @@ namespace DatabaseAccess.Data
         {
             var appList = _context.JobApplications.Include(a => a.User).Include(a => a.JobPost).Where(x => x.User.Id == userId).ToList();
             return appList;
+
         }
 
         public async Task<List<JobApplication>> GetJobApplicationsByPost(int postId)
