@@ -1,10 +1,10 @@
 language: csharp
 mono: none
 addons:
- snaps:
-  - name: dotnet-sdk 
-    confinement: classic
-    channel: 6.0/beta
+  snaps:
+    - name: dotnet-sdk
+      confinement: classic
+      channel: 6.0/beta
 script:
- - dotnet build ./CSAPlatform/CSAPlatform.sln
- 
+  - dotnet build ./CSAPlatform/CSAPlatform.sln
+  - dotnet test ./CSAPlatform/UnitTesting/UnitTesting.csproj

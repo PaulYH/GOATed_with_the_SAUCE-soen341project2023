@@ -1,0 +1,10 @@
+global using Xunit;
+global using Moq;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNet.Identity.EntityFramework;
+global using DatabaseAccess.Data;
+global using DatabaseAccess.Entities;
+global using Moq.EntityFrameworkCore;
+global using System.Data.Entity;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.InMemory;
