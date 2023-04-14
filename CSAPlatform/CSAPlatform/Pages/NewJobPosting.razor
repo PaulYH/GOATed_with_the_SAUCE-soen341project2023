@@ -7,6 +7,18 @@
 @inject HttpContextAccessor HttpContextAccessor
 @inject UserManager<ApplicationUser> UserManager
 @inject JobPostService JobPostService
+<style>
+    .color_btn {
+        color: #ffffff;
+        background-color: #6fa8aa;
+        border-color: #5f9ea0;
+    }
+
+    .text_field_padding {
+        padding: 1px 1px 10px;
+    }
+
+</style>
 
 <PageTitle>New</PageTitle>
 
@@ -80,7 +92,7 @@
 </Field>
 
 <Field>
-    <Button Color="Color.Success" Clicked="SaveData">Save</Button>
+    <Button class="color_btn" Clicked="SaveData">Save</Button>
 </Field>
 
 
