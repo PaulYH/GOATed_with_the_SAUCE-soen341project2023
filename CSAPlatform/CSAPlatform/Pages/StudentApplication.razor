@@ -218,6 +218,6 @@ else
         currentApp.Status = chosenStatus;
         JobApplicationService.UpdateApplication(currentApp);
 
-        EmailService.SendEmail(currentStudent, currentJobPost, currentApp, chosenStatus, chosenDate);
+        EmailService.SendEmail(currentStudent, currentJobPost, currentApp, chosenStatus, chosenDate, customMessage);
     }
 }
