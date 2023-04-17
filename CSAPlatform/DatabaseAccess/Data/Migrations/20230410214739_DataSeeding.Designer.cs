@@ -4,6 +4,7 @@ using DatabaseAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSAPlatform.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230410214739_DataSeeding")]
+    partial class DataSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,19 +124,18 @@ namespace CSAPlatform.Data.Migrations
                             Id = "e7985cd6-96b2-498e-83c9-a7eb99bf071b",
                             AccessFailedCount = 0,
                             CompanyName = "",
-                            ConcurrencyStamp = "e6ef69de-3aef-445b-932c-52e836179f08",
+                            ConcurrencyStamp = "6eb4d182-2b1b-4a37-a320-2296f18638cd",
                             Email = "admin@localhost",
                             EmailConfirmed = true,
                             FirstName = "admin",
                             LastName = "admin",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST",
-                            NormalizedUserName = "ADMIN@LOCALHOST",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFeBC6iG3FxHD9FGMWDb8f74WRwER5QlwZtf2ThgWsL5Pl07259C0j5O9QQkonyatQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAzPz5+yzhFdAyYnsuxDYsM7YyohSaAGpjfaciu+eXfY4BTunhfeFx/mi8JGAzNPgQ==",
                             PhoneNumberConfirmed = false,
                             Program = "",
                             Role = 2,
-                            SecurityStamp = "a46112f1-d48e-436a-8510-9c56217c5647",
+                            SecurityStamp = "fb64389b-57a7-4514-9ba3-a0f4aedc71c7",
                             StudentNum = "",
                             TwoFactorEnabled = false,
                             University = "",

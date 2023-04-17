@@ -11,6 +11,18 @@
 
     ApplicationUser currentUser = await UserManager.GetUserAsync(User);
 }
+<style>
+    .color_btn {
+        color: #ffffff;
+        background-color: #6fa8aa;
+        border-color: #5f9ea0;
+    }
+
+    .text_field_padding {
+        padding: 1px 1px 8px;
+    }
+
+</style>
 
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
@@ -18,45 +30,45 @@
     <div class="col-md-6">
         <form id="profile-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
+            <div class="form-floating text_field_padding">
                 <input asp-for="Username" class="form-control" disabled />
                 <label asp-for="Username" class="form-label"></label>
             </div>
-            <div class="form-floating">
+            <div class="form-floating text_field_padding">
                 <input asp-for="Input.FirstName" class="form-control" />
                 <label asp-for="Input.FirstName" class="form-control"></label>
             </div>
-            <div class="form-floating">
+            <div class="form-floating text_field_padding">
                 <input asp-for="Input.LastName" class="form-control" />
                 <label asp-for="Input.LastName" class="form-control"></label>
             </div>
-            <div class="form-floating">
+            <div class="form-floating text_field_padding">
                 <input asp-for="Input.Email" class="form-control" />
                 <label asp-for="Input.Email" class="form-control"></label>
             </div>
-            <div class="form-floating">
+            <div class="form-floating text_field_padding">
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Employer)">
+            <div class="form-floating text_field_padding" hidden="@(currentUser.Role == RoleType.Employer)">
                 <input asp-for="Input.StudentNum" class="form-control" />
                 <label asp-for="Input.StudentNum" class="form-control"></label>
             </div>
-            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Employer)">
+            <div class="form-floating text_field_padding" hidden="@(currentUser.Role == RoleType.Employer)">
                 <input asp-for="Input.University" class="form-control" />
                 <label asp-for="Input.University" class="form-control"></label>
             </div>
-            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Employer)">
+            <div class="form-floating text_field_padding" hidden="@(currentUser.Role == RoleType.Employer)">
                 <input asp-for="Input.Program" class="form-control" />
                 <label asp-for="Input.Program" class="form-control"></label>
             </div>
-            <div class="form-floating" hidden="@(currentUser.Role == RoleType.Student)">
+            <div class="form-floating text_field_padding" hidden="@(currentUser.Role == RoleType.Student)">
                 <input asp-for="Input.CompanyName" class="form-control" />
                 <label asp-for="Input.CompanyName" class="form-control"></label>
             </div>
             
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg color_btn">Save</button>
         </form>
         <a href="/upload" hidden="@(currentUser.Role == RoleType.Employer)">Upload Resume Here</a>
     </div>

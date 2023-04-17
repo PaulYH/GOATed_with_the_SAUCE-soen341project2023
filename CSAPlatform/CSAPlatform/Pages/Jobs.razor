@@ -8,7 +8,18 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject NavigationManager NavigationManager
 @inject JobPostService JobPostService
+<style>
+    .color_btn {
+        color: #ffffff;
+        background-color: #6fa8aa;
+        border-color: #5f9ea0;
+    }
 
+    .text_field_padding {
+        padding: 1px 1px 10px;
+    }
+
+</style>
 <PageTitle>Jobs</PageTitle>
 @if(isLoggedIn)
 {
@@ -52,7 +63,7 @@
     
 
     <ButtonRowTemplate>
-        <Button hidden="@(isStudent)" Color="Color.Success" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
+            <Button hidden="@(isStudent)" class="color_btn" Disabled="(selectedJob is null)" onclick="@(() => {NavigationManager.NavigateTo("/new");})">New</Button>
     </ButtonRowTemplate>
 </DataGrid>
 

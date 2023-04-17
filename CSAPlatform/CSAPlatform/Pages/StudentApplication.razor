@@ -11,7 +11,18 @@
 @inject JobApplicationService JobApplicationService
 @inject NavigationManager NavigationManager
 @inject ApplicationUserService ApplicationUserService
+<style>
+    .color_btn {
+        color: #ffffff;
+        background-color: #6fa8aa;
+        border-color: #5f9ea0;
+    }
 
+    .text_field_padding {
+        padding: 1px 1px 10px;
+    }
+
+</style>
 @if (isLoaded && !isError)
 {
     <PageTitle>Application #@currentApp.Id</PageTitle>
