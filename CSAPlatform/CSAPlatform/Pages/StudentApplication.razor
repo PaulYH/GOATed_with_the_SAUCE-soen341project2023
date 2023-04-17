@@ -74,7 +74,10 @@
                 </Row>
             </Field>
         }
-        <Button class="color_btn" Clicked="Respond">Submit</Button>
+        <p></p>
+        <MemoEdit Placeholder="Insert custom message..." @bind-Text="@customMessage" />
+        <p></p>
+        <Button Color="Color.Success" Clicked="Respond">Submit</Button>
     }
     @if (isSent)
     {
@@ -128,6 +131,8 @@ else
     string employerCompany = "";
     string employerEmail = "";
     string employerPhone = "";
+
+    string customMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -224,6 +229,6 @@ else
         currentApp.Status = chosenStatus;
         JobApplicationService.UpdateApplication(currentApp);
 
-        EmailService.SendEmail(currentStudent, currentJobPost, currentApp, chosenStatus, chosenDate);
+        EmailService.SendEmail(currentStudent, currentJobPost, currentApp, chosenStatus, chosenDate, customMessage);
     }
 }

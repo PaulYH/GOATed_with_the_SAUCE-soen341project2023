@@ -1,9 +1,12 @@
 ﻿@page "/"
+@using DatabaseAccess.Data;
 @using DatabaseAccess.Entities;
+@using DatabaseAccess.Enums;
 @using Microsoft.AspNetCore.Identity;
 @inject HttpContextAccessor HttpContextAccessor
 @inject UserManager<ApplicationUser> UserManager
 @inject NavigationManager NavigationManager
+@inject JobApplicationService JobApplicationService
 
 <PageTitle>Home</PageTitle>
 
@@ -22,9 +25,58 @@
     {
         <h1>Welcome, User</h1>
     }
+    <p></p>
 
-    <h3>You are logged in as: @currentUser.Role</h3>
+    @if (isStudent)
+    {
+        <CardDeck>
+            <Column>
+                <Row>
+                    <Card>
+                        <CardImage Source=""> </CardImage>
+                        <CardBody>
+                            <CardTitle Size="3">Total Submitted Applications</CardTitle>
+                            <CardText Style="font-size:40px">
+                                @appList.Count
+                            </CardText>
+                        </CardBody>
+                    </Card>
+                    <Card>
+                        <CardImage Source=""></CardImage>
+                        <CardBody>
+                            <CardTitle Size="3">Applications Selected for Interview</CardTitle>
+                            <CardText Style="font-size:40px">
+                                @selectedList.Count
+                            </CardText>
+                        </CardBody>
+                    </Card>
+                </Row>
+                <p style="padding:10px"></p>
+                <Row>
+                    <Card>
+                        <CardImage Source=""></CardImage>
+                        <CardBody>
+                            <CardTitle Size="3">Rejected Applications</CardTitle>
+                            <CardText Style="font-size:40px">
+                                @rejectedList.Count
+                            </CardText>
+                        </CardBody>
+                    </Card>
+                    <Card>
+                        <CardImage Source=""></CardImage>
+                        <CardBody>
+                            <CardTitle Size="3">Pending Applications</CardTitle>
+                            <CardText Style="font-size:40px">
+                                @pendingList.Count
+                            </CardText>
+                        </CardBody>
+                    </Card>
+                </Row>
+            </Column>
+        </CardDeck>
+    }
 }
+
 else if (!isLoggedIn && isLoaded)
 {
     <h1>Welcome to the Career Services Application</h1>
@@ -40,10 +92,20 @@ else
     ApplicationUser currentUser;
     bool isLoaded = false;
     bool isLoggedIn = false;
+    bool isStudent = false;
+    List<JobApplication> appList;
+    List<JobApplication> rejectedList;
+    List<JobApplication> selectedList;
+    List<JobApplication> pendingList;
 
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
+        if (isStudent)
+        {
+            await GetApplications();
+        }
+
         isLoaded = true;
 
     }
@@ -51,6 +113,17 @@ else
     {
         currentUser = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
         if (currentUser != null)
+        {
             isLoggedIn = true;
+            isStudent = (currentUser.Role == RoleType.Student);
+        }
+    }
+
+    public async Task GetApplications()
+    {
+        appList = await JobApplicationService.GetJobApplicationsByUser(currentUser.Id);
+        rejectedList = appList.Where(x => x.Status == AppStatusType.Rejected).ToList();
+        selectedList = appList.Where(x => x.Status == AppStatusType.Selected).ToList();
+        pendingList = appList.Where(x => x.Status == AppStatusType.Submitted).ToList();
     }
 }

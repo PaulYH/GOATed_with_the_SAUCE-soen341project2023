@@ -22,11 +22,23 @@ else
           Data="@appList"
           RowSelectable=@((e) => { NavigateTo(e.Item); return true; })
           Editable
+          Filterable
           Responsive
           ShowPager
           CommandMode="DataGridCommandMode.ButtonRow">
         <DataGridColumns>
             <DataGridColumn Field="@nameof(JobApplication.Id)" Caption="Application ID" Sortable="false" />
+            <DataGridSelectColumn Field="@nameof(JobApplication.Status)" CustomFilter="@OnCustomFilter" Caption="Status">
+                <FilterTemplate>
+                    <Select TValue="string" SelectedValue="@selectedStatusFilter" SelectedValueChanged="@(value => { selectedStatusFilter = value; context.TriggerFilterChange( selectedStatusFilter ); })">
+                        <SelectItem Value="@("*")"> All </SelectItem>
+                        <SelectItem Value="@("Submitted")">Submitted </SelectItem>
+                        <SelectItem Value="@("Selected")">Selected </SelectItem>
+                        <SelectItem Value="@("Rejected")">Rejected </SelectItem>
+                    </Select>
+                </FilterTemplate>
+            </DataGridSelectColumn>
+
         </DataGridColumns>
     </DataGrid>
 }
@@ -36,6 +48,7 @@ else
     private List<JobApplication> appList = new List<JobApplication> { };
     ApplicationUser? currentUser { get; set; }
     bool isStudent = false;
+    public string selectedStatusFilter;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,5 +80,15 @@ else
         {
             NavigationManager.NavigateTo($"/job/{app.JobPost.Id}/application/{app.Id}");
         }
+    }
+
+    public bool OnCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string customFilter)
+        {
+            return customFilter == "*" || customFilter == itemValue?.ToString();
+        }
+
+        return true;
     }
 }
