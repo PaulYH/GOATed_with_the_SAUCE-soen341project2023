@@ -20,9 +20,9 @@ name: Snyk Security
 
 on:
   push:
-    branches: ["tati-b-patch-1" ]
+    branches: ["main"]
   pull_request:
-    branches: ["tati-b-patch-1"]
+    branches: ["main"]
 
 permissions:
   contents: read
