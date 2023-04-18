@@ -29,8 +29,11 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --sarif-file-output=snyk.sarif
+          args: --file-patterns='**/*.cshtml'
+                --sarif-file-output=snyk-razor.sarif
+      - name: Merge SARIF results
+        run: cat snyk.sarif snyk-razor.sarif > snyk-merged.sarif
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk.sarif
+          sarif_file: snyk-merged.sarif
